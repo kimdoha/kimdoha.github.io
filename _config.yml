@@ -1,0 +1,70 @@
+theme: jekyll-theme-chirpy
+
+lang: ko-KR
+timezone: Asia/Seoul
+
+title: Doha's Dev Log
+tagline: TIL & WIL - 매일 배우고, 매주 돌아보기
+description: >-
+  백엔드 개발자 김도하의 기술 블로그.
+  TIL(Today I Learned), WIL(Weekly I Learned), 업무 회고를 기록합니다.
+
+url: "https://kimdoha.github.io"
+
+github:
+  username: kimdoha
+
+social:
+  name: Doha Kim
+  email: ""
+  links:
+    - https://github.com/kimdoha
+
+# Analytics / Comments (필요 시 활성화)
+# analytics:
+#   google:
+#     id: ""
+# comments:
+#   provider: giscus
+
+avatar: ""
+
+# 사이드바 탭
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+      comments: false
+      toc: true
+      permalink: /posts/:title/
+
+sass:
+  style: compressed
+
+compress_html:
+  clippings: all
+  comments: all
+  endings: all
+  profile: false
+  blanklines: false
+  ignore:
+    envs: [development]
+
+exclude:
+  - "*.gem"
+  - "*.gemspec"
+  - docs
+  - tools
+  - README.md
+  - LICENSE
+
+jekyll-archives:
+  enabled: [categories, tags]
+  layouts:
+    category: category
+    tag: tag
+  permalinks:
+    tag: /tags/:name/
+    category: /categories/:name/
