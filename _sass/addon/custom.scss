@@ -1,74 +1,87 @@
+/* ===== Pretendard Font Import ===== */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+
 /* ===== Base ===== */
+:root {
+  --bs-font-sans-serif: 'Pretendard Variable', 'Pretendard', -apple-system,
+    BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif;
+  --bs-body-font-size: 0.88rem;
+  --bs-body-line-height: 1.6;
+}
+
 html {
-  font-size: 14px;
+  font-size: 13.5px;
 }
 
 body {
-  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui,
-    'Segoe UI', Roboto, sans-serif;
+  font-family: 'Pretendard Variable', 'Pretendard', -apple-system,
+    BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
 }
 
 /* ===== Post title ===== */
 h1.dynamic-title,
 #post-wrapper h1 {
-  font-size: 1.55rem;
-  font-weight: 800;
+  font-size: 1.5rem;
+  font-weight: 700;
   letter-spacing: -0.03em;
-  line-height: 1.35;
+  line-height: 1.4;
   margin-bottom: 0.3rem;
 }
 
 /* ===== Post content ===== */
 .post-content {
-  font-size: 0.92rem;
-  line-height: 1.9;
-  letter-spacing: -0.008em;
+  font-size: 0.88rem;
+  line-height: 1.85;
+  letter-spacing: -0.012em;
   color: #2c2c2c;
-  max-width: 720px;
+  max-width: 700px;
   word-break: keep-all;
   overflow-wrap: break-word;
 
   /* — Headings — */
   h2 {
-    font-size: 1.3rem;
+    font-size: 1.22rem;
     font-weight: 700;
-    margin-top: 3rem;
-    margin-bottom: 0.9rem;
-    padding-bottom: 0.35rem;
+    margin-top: 2.8rem;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.3rem;
     border-bottom: 1px solid #e8e8e8;
+    letter-spacing: -0.02em;
   }
 
   h3 {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     font-weight: 600;
-    margin-top: 2.2rem;
-    margin-bottom: 0.65rem;
+    margin-top: 2rem;
+    margin-bottom: 0.6rem;
+    letter-spacing: -0.015em;
   }
 
   h4 {
-    font-size: 0.98rem;
+    font-size: 0.94rem;
     font-weight: 600;
-    margin-top: 1.6rem;
-    margin-bottom: 0.5rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.45rem;
   }
 
   /* — Paragraphs — */
   p {
-    margin-bottom: 1.15rem;
+    margin-bottom: 1.05rem;
   }
 
   /* — Code blocks — */
   div.highlight,
   pre:not(.highlight) {
-    margin: 1.3rem 0;
+    margin: 1.2rem 0;
   }
 
   pre {
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     line-height: 1.65;
-    padding: 1rem 1.2rem;
+    padding: 0.9rem 1.1rem;
     border-radius: 8px;
     border-left: 3px solid #6c9bd2;
     font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
@@ -76,8 +89,8 @@ h1.dynamic-title,
 
   /* — Inline code — */
   code:not([class*="language-"]) {
-    font-size: 0.83em;
-    padding: 0.15em 0.4em;
+    font-size: 0.82em;
+    padding: 0.12em 0.38em;
     border-radius: 4px;
     background-color: #f0f2f5;
     color: #c7254e;
@@ -86,7 +99,7 @@ h1.dynamic-title,
 
   /* — Tables — */
   table {
-    font-size: 0.84rem;
+    font-size: 0.8rem;
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
@@ -103,7 +116,7 @@ h1.dynamic-title,
     }
 
     th, td {
-      padding: 0.55rem 0.8rem;
+      padding: 0.5rem 0.75rem;
       border-bottom: 1px solid #eaecef;
     }
 
@@ -119,11 +132,11 @@ h1.dynamic-title,
   /* — Lists — */
   ul, ol {
     line-height: 1.85;
-    margin-bottom: 1.1rem;
-    padding-left: 1.4rem;
+    margin-bottom: 1rem;
+    padding-left: 1.3rem;
 
     li {
-      margin-bottom: 0.3rem;
+      margin-bottom: 0.25rem;
     }
 
     li::marker {
@@ -133,11 +146,11 @@ h1.dynamic-title,
 
   /* — Blockquotes — */
   blockquote {
-    font-size: 0.88rem;
+    font-size: 0.85rem;
     line-height: 1.75;
     border-left: 3px solid #6c9bd2;
     background-color: #f8f9fb;
-    padding: 0.8rem 1.1rem;
+    padding: 0.75rem 1rem;
     border-radius: 0 6px 6px 0;
     margin: 1.2rem 0;
   }
@@ -158,7 +171,7 @@ h1.dynamic-title,
 
 /* ===== Post metadata ===== */
 .post-meta {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   color: #888;
 }
 
@@ -183,11 +196,11 @@ h1.dynamic-title,
   }
 
   .card-body {
-    padding: 1.2rem 1.4rem;
+    padding: 1.1rem 1.3rem;
   }
 
   .card-title {
-    font-size: 1.05rem;
+    font-size: 1rem;
     font-weight: 700;
     letter-spacing: -0.02em;
     color: #1a1a1a;
@@ -195,9 +208,9 @@ h1.dynamic-title,
   }
 
   .card-text {
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     line-height: 1.7;
-    color: #555;
+    color: #666;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -205,7 +218,7 @@ h1.dynamic-title,
   }
 
   .post-meta {
-    font-size: 0.74rem;
+    font-size: 0.7rem;
     color: #999;
   }
 }
@@ -213,46 +226,51 @@ h1.dynamic-title,
 /* ===== Sidebar ===== */
 #sidebar {
   .site-title {
-    font-size: 1.05rem;
+    font-size: 1rem;
     font-weight: 700;
     letter-spacing: -0.02em;
   }
 
   .site-subtitle {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     opacity: 0.8;
   }
 }
 
 /* ===== TOC ===== */
 #toc-wrapper {
-  font-size: 0.76rem;
-  line-height: 1.7;
+  font-size: 0.73rem;
+  line-height: 1.65;
 
   li a {
-    padding: 0.25rem 0;
+    padding: 0.2rem 0;
     transition: color 0.15s ease;
   }
 }
 
-/* ===== Right panel tags ===== */
+/* ===== Right panel ===== */
 .panel-heading {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
 .post-tag {
-  font-size: 0.72rem !important;
-  padding: 0.2rem 0.55rem !important;
+  font-size: 0.68rem !important;
+  padding: 0.18rem 0.5rem !important;
   border-radius: 12px !important;
+}
+
+/* ===== Footer ===== */
+footer {
+  font-size: 0.72rem;
 }
 
 /* ===== Dark mode ===== */
 [data-mode="dark"] {
   .post-content {
-    color: #cdd0d4;
+    color: #c8cbd0;
 
     h2 {
       border-bottom-color: #3a3a3a;
@@ -268,7 +286,7 @@ h1.dynamic-title,
     }
 
     strong {
-      color: #e8e8e8;
+      color: #e4e4e4;
     }
 
     table {
