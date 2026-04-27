@@ -96,38 +96,41 @@ RC에서는 gap lock이 걸리지 않는다. 기존 row만 잠근다.
 
 만약 RR이었다면:
 
-```shell
-TX-A: SELECT * FROM product
-      WHERE mall_no = ? FOR UPDATE;
-      → 해당 몰 범위 전체 gap lock
+```sql
+-- TX-A: 해당 몰 범위 전체 gap lock
+SELECT * FROM product
+ WHERE mall_no = ?
+   FOR UPDATE;
 
-TX-B: INSERT INTO product (mall_no, ...)
-      VALUES (?, ...);
-      → BLOCKED! (gap lock 때문에 대기)
+-- TX-B: gap lock 때문에 대기 → BLOCKED!
+INSERT INTO product (mall_no, ...)
+VALUES (?, ...);
 
-TX-C: UPDATE product
-      SET sale_status = 'SOLD_OUT'
-      WHERE mall_no = ? AND product_no = ?;
-      → 역시 대기 가능
+-- TX-C: 역시 대기 가능
+UPDATE product
+   SET sale_status = 'SOLD_OUT'
+ WHERE mall_no = ?
+   AND product_no = ?;
 ```
 
 셀러 입장에서는 "상품 등록이 왜 이렇게 느리지?" 가 된다.
 
 RC에서는:
 
-```shell
-TX-A: SELECT * FROM product
-      WHERE mall_no = ? FOR UPDATE;
-      → 기존 row만 record lock
+```sql
+-- TX-A: 기존 row만 record lock
+SELECT * FROM product
+ WHERE mall_no = ?
+   FOR UPDATE;
 
-TX-B: INSERT INTO product (mall_no, ...)
-      VALUES (?, ...);
-      → OK! 바로 실행
+-- TX-B: 바로 실행 → OK!
+INSERT INTO product (mall_no, ...)
+VALUES (?, ...);
 
-TX-C: UPDATE product SET ...
-      WHERE product_no = ?;
-      → 해당 row에 lock 잡혀있으면 대기,
-        아니면 바로 실행
+-- TX-C: 해당 row에 lock 잡혀있으면 대기, 아니면 바로 실행
+UPDATE product
+   SET ...
+ WHERE product_no = ?;
 ```
 
 ---
