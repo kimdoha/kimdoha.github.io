@@ -1,9 +1,9 @@
-/* ===== Pretendard Font Import ===== */
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+/* ===== Wanted Sans Font Import ===== */
+@import url('https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css');
 
 /* ===== Theme variable overrides ===== */
 :root {
-  --bs-font-sans-serif: 'Pretendard Variable', 'Pretendard', -apple-system,
+  --bs-font-sans-serif: 'Wanted Sans Variable', 'Wanted Sans', -apple-system,
     BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif;
   --bs-body-font-size: 0.88rem;
   --bs-body-line-height: 1.6;
@@ -22,7 +22,7 @@ html {
 }
 
 body {
-  font-family: 'Pretendard Variable', 'Pretendard', -apple-system,
+  font-family: 'Wanted Sans Variable', 'Wanted Sans', -apple-system,
     BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
