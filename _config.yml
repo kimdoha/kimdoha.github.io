@@ -30,7 +30,7 @@ social:
 # comments:
 #   provider: giscus
 
-avatar: ""
+avatar: false
 
 # 사이드바 탭
 defaults:

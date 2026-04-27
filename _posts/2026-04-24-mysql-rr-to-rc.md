@@ -1,5 +1,5 @@
 ---
-title: "MySQL RR 을 RC 로 바꾼 이유"
+title: "MySQL RR 을 RC 로 바꾸는 이유"
 date: 2026-04-24 18:00:00 +0900
 categories: [Database, MySQL]
 tags: [mysql, isolation-level, gap-lock, mvcc, read-committed]
