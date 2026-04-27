@@ -1,12 +1,20 @@
 /* ===== Pretendard Font Import ===== */
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
 
-/* ===== Base ===== */
+/* ===== Theme variable overrides ===== */
 :root {
   --bs-font-sans-serif: 'Pretendard Variable', 'Pretendard', -apple-system,
     BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif;
   --bs-body-font-size: 0.88rem;
   --bs-body-line-height: 1.6;
+
+  /* Code block colors — Light */
+  --highlight-bg-color: #f4f6f9;
+  --code-color: #2d3339;
+  --code-header-text-color: #8b949e;
+  --code-header-muted-color: #d8dee4;
+  --inline-code-bg: #eff1f3;
+  --highlighter-rouge-color: #3f596f;
 }
 
 html {
@@ -72,29 +80,43 @@ h1.dynamic-title,
     margin-bottom: 1.05rem;
   }
 
-  /* — Code blocks — */
-  div.highlight,
-  pre:not(.highlight) {
-    margin: 1.2rem 0;
+  /* — Strong/bold — */
+  strong {
+    font-weight: 600;
+    color: #1a1a1a;
   }
 
-  pre {
-    font-size: 0.75rem;
-    line-height: 1.65;
-    padding: 0.9rem 1.1rem;
-    border-radius: 8px;
+  /* — Horizontal rules — */
+  hr {
+    margin: 2.5rem 0;
+    border: none;
+    border-top: 1px solid #e8e8e8;
+  }
+
+  /* — Lists — */
+  ul, ol {
+    line-height: 1.85;
+    margin-bottom: 1rem;
+    padding-left: 1.3rem;
+
+    li {
+      margin-bottom: 0.25rem;
+    }
+
+    li::marker {
+      color: #6c9bd2;
+    }
+  }
+
+  /* — Blockquotes — */
+  blockquote {
+    font-size: 0.85rem;
+    line-height: 1.75;
     border-left: 3px solid #6c9bd2;
-    font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
-  }
-
-  /* — Inline code — */
-  code:not([class*="language-"]) {
-    font-size: 0.82em;
-    padding: 0.12em 0.38em;
-    border-radius: 4px;
-    background-color: #f0f2f5;
-    color: #c7254e;
-    font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
+    background-color: #f8f9fb;
+    padding: 0.75rem 1rem;
+    border-radius: 0 6px 6px 0;
+    margin: 1.2rem 0;
   }
 
   /* — Tables — */
@@ -128,45 +150,93 @@ h1.dynamic-title,
       background-color: #f8f9fb;
     }
   }
+}
 
-  /* — Lists — */
-  ul, ol {
-    line-height: 1.85;
-    margin-bottom: 1rem;
-    padding-left: 1.3rem;
+/* ============================
+   Code blocks — full override
+   ============================ */
 
-    li {
-      margin-bottom: 0.25rem;
+/* Wrapper: .highlighter-rouge > .code-header + .highlight > pre > code */
+div[class^="language-"],
+div.highlighter-rouge {
+  margin: 1rem 0 !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+  border: 1px solid #e2e6ea;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* Code header bar (language label + copy button) */
+.code-header {
+  font-size: 0.68rem !important;
+  padding: 0.3rem 0.8rem !important;
+  background-color: #edf0f4 !important;
+  border-bottom: 1px solid #e2e6ea;
+  letter-spacing: 0.02em;
+}
+
+/* Highlight container */
+.highlight,
+div[class^="language-"] .highlight {
+  background-color: #f7f8fa !important;
+
+  pre {
+    margin: 0 !important;
+    padding: 0.75rem 1rem !important;
+    font-size: 0.72rem !important;
+    line-height: 1.7 !important;
+    background-color: transparent !important;
+    border: none !important;
+    border-left: none !important;
+    border-radius: 0 !important;
+    font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Menlo, Consolas, monospace !important;
+    overflow-x: auto;
+  }
+
+  code {
+    font-size: inherit !important;
+    font-family: inherit !important;
+    background: none !important;
+    padding: 0 !important;
+    color: var(--code-color);
+  }
+
+  /* Line numbers */
+  table {
+    border: none !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    font-size: 0.72rem !important;
+
+    td {
+      border: none !important;
+      padding: 0 !important;
+
+      &.gl {
+        padding-right: 0.8rem !important;
+        color: #b0b8c1;
+        user-select: none;
+      }
     }
 
-    li::marker {
-      color: #6c9bd2;
+    pre {
+      padding: 0 !important;
     }
   }
+}
 
-  /* — Blockquotes — */
-  blockquote {
-    font-size: 0.85rem;
-    line-height: 1.75;
-    border-left: 3px solid #6c9bd2;
-    background-color: #f8f9fb;
-    padding: 0.75rem 1rem;
-    border-radius: 0 6px 6px 0;
-    margin: 1.2rem 0;
-  }
-
-  /* — Horizontal rules — */
-  hr {
-    margin: 2.5rem 0;
-    border: none;
-    border-top: 1px solid #e8e8e8;
-  }
-
-  /* — Strong/bold — */
-  strong {
-    font-weight: 600;
-    color: #1a1a1a;
-  }
+/* Inline code */
+.post-content code.highlighter-rouge,
+.post-content code:not([class*="language-"]) {
+  font-size: 0.78em !important;
+  padding: 0.15em 0.4em !important;
+  border-radius: 4px !important;
+  background-color: #eff1f3 !important;
+  color: #ab4642 !important;
+  font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace !important;
+  border: 1px solid #e2e6ea;
+  word-break: break-word;
 }
 
 /* ===== Post metadata ===== */
@@ -267,22 +337,23 @@ footer {
   font-size: 0.72rem;
 }
 
-/* ===== Dark mode ===== */
-[data-mode="dark"] {
+/* =================================
+   Dark mode
+   ================================= */
+html[data-mode="dark"] {
+  /* Code block variables */
+  --highlight-bg-color: #1c1e26;
+  --code-color: #c9d1d9;
+  --code-header-text-color: #6e7681;
+  --code-header-muted-color: #30363d;
+  --inline-code-bg: #262a33;
+  --highlighter-rouge-color: #79c0ff;
+
   .post-content {
     color: #c8cbd0;
 
     h2 {
-      border-bottom-color: #3a3a3a;
-    }
-
-    code:not([class*="language-"]) {
-      background-color: #2a2d35;
-      color: #e06c75;
-    }
-
-    pre {
-      border-left-color: #5a8cc8;
+      border-bottom-color: #333840;
     }
 
     strong {
@@ -290,38 +361,88 @@ footer {
     }
 
     table {
-      border-color: #3a3a3a;
+      border-color: #30363d;
 
       thead th {
-        background-color: #2a2d35;
-        border-bottom-color: #444;
+        background-color: #21252d;
+        border-bottom-color: #3d444d;
       }
 
       th, td {
-        border-bottom-color: #333;
+        border-bottom-color: #2a2f38;
       }
 
       tbody tr:hover {
-        background-color: #2a2d35;
+        background-color: #21252d;
       }
     }
 
     blockquote {
-      background-color: #1e2028;
+      background-color: #181a22;
       border-left-color: #5a8cc8;
     }
 
     hr {
-      border-top-color: #3a3a3a;
+      border-top-color: #2a2f38;
     }
   }
 
+  /* Dark code blocks */
+  div[class^="language-"],
+  div.highlighter-rouge {
+    border-color: #30363d;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .code-header {
+    background-color: #21252d !important;
+    border-bottom-color: #30363d;
+    color: #6e7681 !important;
+  }
+
+  .highlight,
+  div[class^="language-"] .highlight {
+    background-color: #161822 !important;
+
+    pre {
+      background-color: transparent !important;
+    }
+
+    code {
+      color: #c9d1d9;
+    }
+
+    /* Syntax highlighting — One Dark inspired */
+    .k, .kd, .kn, .kp, .kr, .kt, .kv { color: #c678dd; }   /* keywords */
+    .s, .s1, .s2, .sb, .sc, .sd, .sh, .sx { color: #98c379; } /* strings */
+    .c, .c1, .cm, .cs, .cp { color: #5c6370; font-style: italic; } /* comments */
+    .nf, .nb { color: #61afef; }    /* functions */
+    .nc, .nn { color: #e5c07b; }    /* classes/namespaces */
+    .mi, .mf, .mh { color: #d19a66; } /* numbers */
+    .o, .p { color: #abb2bf; }      /* operators */
+    .na { color: #d19a66; }         /* attributes */
+    .nt { color: #e06c75; }         /* tags */
+
+    table td.gl {
+      color: #3d444d !important;
+    }
+  }
+
+  /* Dark inline code */
+  .post-content code.highlighter-rouge,
+  .post-content code:not([class*="language-"]) {
+    background-color: #262a33 !important;
+    color: #e06c75 !important;
+    border-color: #30363d;
+  }
+
+  /* Dark home cards */
   #post-list {
     .card-wrapper {
-      border-color: #333;
+      border-color: #2a2f38;
 
       &:hover {
-        border-color: #555;
+        border-color: #444d56;
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
       }
     }
@@ -331,7 +452,7 @@ footer {
     }
 
     .card-text {
-      color: #999;
+      color: #8b949e;
     }
   }
 }
