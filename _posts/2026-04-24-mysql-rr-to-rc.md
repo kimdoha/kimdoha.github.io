@@ -17,8 +17,7 @@ MySQL InnoDB의 기본 격리수준은 REPEATABLE READ(RR)이다.
 # HikariCP 커넥션 초기화 시 RC 설정
 spring:
   datasource:
-    connection-init-sql: >-
-      SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED
+    connection-init-sql: SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED
     always-send-set-isolation: false
 ```
 
@@ -30,7 +29,7 @@ spring:
 
 InnoDB는 row를 UPDATE해도 이전 데이터를 덮어쓰지 않는다. **Undo Log**에 이전 버전을 보관한다.
 
-```text
+```shell
 [상품 테이블 - product_no=1]
 
 현재 버전:  sale_price=200, trx_id=50
@@ -47,7 +46,7 @@ RC와 RR의 차이는 **Read View를 언제 만드느냐** 딱 하나다.
 | Read View 생성 | 매 SELECT마다 새로 생성 | 트랜잭션 최초 SELECT 시 1번만 |
 | 결과 | 항상 최신 커밋 데이터 | 트랜잭션 시작 시점 데이터 고정 |
 
-```text
+```shell
 TX-A 시작
   SELECT sale_price → 100
 
@@ -97,7 +96,7 @@ RC에서는 gap lock이 걸리지 않는다. 기존 row만 잠근다.
 
 만약 RR이었다면:
 
-```text
+```shell
 TX-A: SELECT * FROM product
       WHERE mall_no = ? FOR UPDATE;
       → 해당 몰 범위 전체 gap lock
@@ -116,7 +115,7 @@ TX-C: UPDATE product
 
 RC에서는:
 
-```text
+```shell
 TX-A: SELECT * FROM product
       WHERE mall_no = ? FOR UPDATE;
       → 기존 row만 record lock
@@ -221,7 +220,7 @@ HikariCP가 커넥션 풀에서 새 커넥션을 만들 때만 SET 명령을 실
 
 RR이 phantom read를 "대부분" 방지한다고 하는데, 완전하지는 않다.
 
-```text
+```shell
 TX-A: SELECT * FROM product
       WHERE price BETWEEN 100 AND 200;
       → 3건
