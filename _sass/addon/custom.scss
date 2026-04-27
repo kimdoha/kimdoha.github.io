@@ -204,6 +204,9 @@ div[class^="language-"] .highlight {
     padding: 0.9rem 1.15rem !important;
     font-size: 12px !important;
     line-height: 1.7 !important;
+    white-space: pre !important;
+    word-wrap: normal !important;
+    overflow-wrap: normal !important;
     background-color: transparent !important;
     border: none !important;
     border-left: none !important;
