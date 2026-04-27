@@ -1,5 +1,6 @@
-/* ===== Wanted Sans Font Import ===== */
+/* ===== Font Imports ===== */
 @import url('https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 /* ===== Theme variable overrides ===== */
 :root {
@@ -164,28 +165,31 @@ h1.dynamic-title,
 /* Wrapper */
 div[class^="language-"],
 div.highlighter-rouge {
-  margin: 1.2rem 0 !important;
-  border-radius: 8px !important;
+  margin: 1.4rem 0 !important;
+  border-radius: 10px !important;
   overflow: hidden;
-  border: none !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.04) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 /* Code header bar */
 .code-header {
-  font-size: 0.65rem !important;
-  padding: 0.25rem 0.9rem !important;
-  background-color: #1e2028 !important;
-  border-bottom: 1px solid #2d3139 !important;
-  color: #6e7681 !important;
-  letter-spacing: 0.03em;
+  font-size: 11px !important;
+  font-weight: 500;
+  padding: 0.35rem 1rem !important;
+  background-color: #21252b !important;
+  border-bottom: 1px solid #2c313a !important;
+  color: #636d83 !important;
+  letter-spacing: 0.04em;
+  font-family: 'JetBrains Mono', monospace !important;
 
   /* Copy button */
   button {
-    color: #6e7681 !important;
+    color: #636d83 !important;
+    transition: color 0.15s ease;
 
     &:hover {
-      color: #adb5bd !important;
+      color: #abb2bf !important;
     }
   }
 }
@@ -197,22 +201,26 @@ div[class^="language-"] .highlight {
 
   pre {
     margin: 0 !important;
-    padding: 1rem 1.2rem !important;
-    font-size: 12.5px !important;
-    line-height: 1.65 !important;
+    padding: 0.9rem 1.15rem !important;
+    font-size: 12px !important;
+    line-height: 1.7 !important;
     background-color: transparent !important;
     border: none !important;
     border-left: none !important;
     border-radius: 0 !important;
     font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Menlo, Monaco, Consolas, monospace !important;
+    font-weight: 400;
     overflow-x: auto;
     color: #abb2bf;
     -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
+    tab-size: 4;
   }
 
   code {
     font-size: inherit !important;
     font-family: inherit !important;
+    font-weight: inherit !important;
     background: none !important;
     padding: 0 !important;
     color: #abb2bf !important;
@@ -240,7 +248,7 @@ div[class^="language-"] .highlight {
     margin: 0 !important;
     box-shadow: none !important;
     border-radius: 0 !important;
-    font-size: 12.5px !important;
+    font-size: 12px !important;
     background: transparent !important;
 
     td {
@@ -252,6 +260,7 @@ div[class^="language-"] .highlight {
         padding-right: 0.8rem !important;
         color: #4b5263 !important;
         user-select: none;
+        opacity: 0.6;
       }
     }
 
@@ -268,12 +277,13 @@ div[class^="language-"] .highlight {
 /* Inline code */
 .post-content code.highlighter-rouge,
 .post-content code:not([class*="language-"]) {
-  font-size: 0.78em !important;
-  padding: 0.14em 0.4em !important;
-  border-radius: 3px !important;
+  font-size: 0.8em !important;
+  padding: 0.15em 0.45em !important;
+  border-radius: 4px !important;
   background-color: #f0f2f5 !important;
   color: #c7254e !important;
   font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace !important;
+  font-weight: 400;
   border: none;
   word-break: break-word;
 }
