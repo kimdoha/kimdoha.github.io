@@ -223,24 +223,26 @@ HikariCP가 커넥션 풀에서 새 커넥션을 만들 때만 SET 명령을 실
 
 RR이 phantom read를 "대부분" 방지한다고 하는데, 완전하지는 않다.
 
-```shell
-TX-A: SELECT * FROM product
-      WHERE price BETWEEN 100 AND 200;
-      → 3건
+```sql
+-- TX-A
+SELECT * FROM product
+ WHERE price BETWEEN 100 AND 200;
+-- → 3건
 
-TX-B: INSERT INTO product (no, price)
-      VALUES (99, 150);
-      COMMIT;
+-- TX-B
+INSERT INTO product (no, price) VALUES (99, 150);
+COMMIT;
 
-TX-A: UPDATE product
-      SET price = price
-      WHERE no = 99;
-      → current read로 B가 삽입한 row를
-        A의 스냅샷에 편입
+-- TX-A: UPDATE는 current read (최신 데이터)
+-- → B가 삽입한 row를 A의 스냅샷에 편입
+UPDATE product
+   SET price = price
+ WHERE no = 99;
 
-TX-A: SELECT * FROM product
-      WHERE price BETWEEN 100 AND 200;
-      → 4건 (phantom!)
+-- TX-A: 다시 조회
+SELECT * FROM product
+ WHERE price BETWEEN 100 AND 200;
+-- → 4건 (phantom!)
 ```
 
 UPDATE/DELETE는 스냅샷이 아닌 **current read**를 하기 때문에, 다른 트랜잭션이 삽입한 row를 건드리면 그 row가 이후 SELECT에서도 보이게 된다. `SELECT ... FOR UPDATE`를 쓰면 gap lock으로 INSERT 자체를 막아서 완전 방지 가능하지만, 그건 동시성을 희생하는 것이다.
