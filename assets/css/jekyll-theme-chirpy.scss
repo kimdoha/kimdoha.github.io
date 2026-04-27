@@ -1,0 +1,12 @@
+---
+---
+
+/* prettier-ignore */
+@use 'main
+{%- if jekyll.environment == 'production' -%}
+  .bundle
+{%- endif -%}
+';
+
+/* Load custom styles from _sass/addon/custom.scss */
+@import 'addon/custom';
