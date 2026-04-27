@@ -158,44 +158,56 @@ h1.dynamic-title,
 }
 
 /* ============================
-   Code blocks — full override
+   Code blocks — always dark bg
    ============================ */
 
-/* Wrapper: .highlighter-rouge > .code-header + .highlight > pre > code */
+/* Wrapper */
 div[class^="language-"],
 div.highlighter-rouge {
-  margin: 1rem 0 !important;
+  margin: 1.2rem 0 !important;
   border-radius: 8px !important;
   overflow: hidden;
-  border: 1px solid #e2e6ea;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
-/* Code header bar (language label + copy button) */
+/* Code header bar */
 .code-header {
-  font-size: 0.68rem !important;
-  padding: 0.3rem 0.8rem !important;
-  background-color: #edf0f4 !important;
-  border-bottom: 1px solid #e2e6ea;
-  letter-spacing: 0.02em;
+  font-size: 0.65rem !important;
+  padding: 0.25rem 0.9rem !important;
+  background-color: #1e2028 !important;
+  border-bottom: 1px solid #2d3139 !important;
+  color: #6e7681 !important;
+  letter-spacing: 0.03em;
+
+  /* Copy button */
+  button {
+    color: #6e7681 !important;
+
+    &:hover {
+      color: #adb5bd !important;
+    }
+  }
 }
 
-/* Highlight container */
+/* Highlight container — always dark */
 .highlight,
 div[class^="language-"] .highlight {
-  background-color: #f7f8fa !important;
+  background-color: #282c34 !important;
 
   pre {
     margin: 0 !important;
-    padding: 0.75rem 1rem !important;
-    font-size: 0.72rem !important;
-    line-height: 1.7 !important;
+    padding: 1rem 1.2rem !important;
+    font-size: 12.5px !important;
+    line-height: 1.65 !important;
     background-color: transparent !important;
     border: none !important;
     border-left: none !important;
     border-radius: 0 !important;
-    font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Menlo, Consolas, monospace !important;
+    font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Menlo, Monaco, Consolas, monospace !important;
     overflow-x: auto;
+    color: #abb2bf;
+    -webkit-font-smoothing: auto;
   }
 
   code {
@@ -203,30 +215,52 @@ div[class^="language-"] .highlight {
     font-family: inherit !important;
     background: none !important;
     padding: 0 !important;
-    color: var(--code-color);
+    color: #abb2bf !important;
   }
 
-  /* Line numbers */
+  /* One Dark syntax highlighting — always applied */
+  .k, .kd, .kn, .kp, .kr, .kt, .kv { color: #c678dd !important; }
+  .s, .s1, .s2, .sb, .sc, .sd, .sh, .sx { color: #98c379 !important; }
+  .c, .c1, .cm, .cs, .cp { color: #5c6370 !important; font-style: italic; }
+  .nf, .nb { color: #61afef !important; }
+  .nc, .nn { color: #e5c07b !important; }
+  .mi, .mf, .mh, .il { color: #d19a66 !important; }
+  .o, .p { color: #abb2bf !important; }
+  .na { color: #d19a66 !important; }
+  .nt { color: #e06c75 !important; }
+  .nl { color: #61afef !important; }
+  .ni, .ne { color: #e06c75 !important; }
+  .nv, .vi, .vc, .vg { color: #e06c75 !important; }
+  .w { color: #abb2bf !important; }
+  .ss { color: #98c379 !important; }
+
+  /* Line numbers table */
   table {
     border: none !important;
     margin: 0 !important;
     box-shadow: none !important;
     border-radius: 0 !important;
-    font-size: 0.72rem !important;
+    font-size: 12.5px !important;
+    background: transparent !important;
 
     td {
       border: none !important;
       padding: 0 !important;
+      background: transparent !important;
 
       &.gl {
         padding-right: 0.8rem !important;
-        color: #b0b8c1;
+        color: #4b5263 !important;
         user-select: none;
       }
     }
 
     pre {
       padding: 0 !important;
+    }
+
+    tbody tr:hover {
+      background: transparent !important;
     }
   }
 }
@@ -235,12 +269,12 @@ div[class^="language-"] .highlight {
 .post-content code.highlighter-rouge,
 .post-content code:not([class*="language-"]) {
   font-size: 0.78em !important;
-  padding: 0.15em 0.4em !important;
-  border-radius: 4px !important;
-  background-color: #eff1f3 !important;
-  color: #ab4642 !important;
+  padding: 0.14em 0.4em !important;
+  border-radius: 3px !important;
+  background-color: #f0f2f5 !important;
+  color: #c7254e !important;
   font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace !important;
-  border: 1px solid #e2e6ea;
+  border: none;
   word-break: break-word;
 }
 
@@ -389,47 +423,6 @@ html[data-mode="dark"] {
 
     hr {
       border-top-color: #2a2f38;
-    }
-  }
-
-  /* Dark code blocks */
-  div[class^="language-"],
-  div.highlighter-rouge {
-    border-color: #30363d;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-  }
-
-  .code-header {
-    background-color: #21252d !important;
-    border-bottom-color: #30363d;
-    color: #6e7681 !important;
-  }
-
-  .highlight,
-  div[class^="language-"] .highlight {
-    background-color: #161822 !important;
-
-    pre {
-      background-color: transparent !important;
-    }
-
-    code {
-      color: #c9d1d9;
-    }
-
-    /* Syntax highlighting — One Dark inspired */
-    .k, .kd, .kn, .kp, .kr, .kt, .kv { color: #c678dd; }   /* keywords */
-    .s, .s1, .s2, .sb, .sc, .sd, .sh, .sx { color: #98c379; } /* strings */
-    .c, .c1, .cm, .cs, .cp { color: #5c6370; font-style: italic; } /* comments */
-    .nf, .nb { color: #61afef; }    /* functions */
-    .nc, .nn { color: #e5c07b; }    /* classes/namespaces */
-    .mi, .mf, .mh { color: #d19a66; } /* numbers */
-    .o, .p { color: #abb2bf; }      /* operators */
-    .na { color: #d19a66; }         /* attributes */
-    .nt { color: #e06c75; }         /* tags */
-
-    table td.gl {
-      color: #3d444d !important;
     }
   }
 
