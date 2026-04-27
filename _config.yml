@@ -49,7 +49,7 @@ sass:
 compress_html:
   clippings: all
   comments: all
-  endings: all
+  endings: []
   profile: false
   blanklines: false
   ignore:
