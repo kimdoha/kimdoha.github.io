@@ -10,6 +10,9 @@ description: >-
   TIL(Today I Learned), WIL(Weekly I Learned), 업무 회고를 기록합니다.
 
 url: "https://kimdoha.github.io"
+baseurl: ""
+
+paginate: 10
 
 github:
   username: kimdoha
