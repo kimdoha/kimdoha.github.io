@@ -1,56 +1,92 @@
 /* Custom typography for better readability */
 
-/* Base font size reduction */
+/* Base font size — compact */
 html {
-  font-size: 15px;
+  font-size: 14px;
+}
+
+/* Post title */
+h1.dynamic-title,
+#post-wrapper h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 /* Post content adjustments */
 .post-content {
-  font-size: 0.95rem;
-  line-height: 1.8;
+  font-size: 0.92rem;
+  line-height: 1.85;
   letter-spacing: -0.01em;
+  color: #333;
 
   /* Headings */
-  h1 { font-size: 1.75rem; }
-  h2 { font-size: 1.45rem; margin-top: 2.5rem; }
-  h3 { font-size: 1.2rem; margin-top: 2rem; }
-  h4 { font-size: 1.05rem; }
+  h1 { font-size: 1.5rem; margin-top: 2.5rem; }
+  h2 { font-size: 1.28rem; margin-top: 2.2rem; margin-bottom: 0.8rem; }
+  h3 { font-size: 1.1rem; margin-top: 1.8rem; margin-bottom: 0.6rem; }
+  h4 { font-size: 1rem; }
 
   /* Paragraphs */
   p {
-    margin-bottom: 1.2rem;
+    margin-bottom: 1rem;
     word-break: keep-all;
   }
 
   /* Code blocks */
   pre {
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     line-height: 1.6;
+    padding: 1rem;
+    border-radius: 6px;
   }
 
   /* Inline code */
   code:not([class*="language-"]) {
-    font-size: 0.85em;
+    font-size: 0.84em;
+    padding: 0.15em 0.35em;
   }
 
   /* Tables */
   table {
-    font-size: 0.88rem;
+    font-size: 0.84rem;
+
+    th, td {
+      padding: 0.45rem 0.65rem;
+    }
   }
 
   /* Lists */
   ul, ol {
-    line-height: 1.75;
+    line-height: 1.8;
+    margin-bottom: 1rem;
+
+    li {
+      margin-bottom: 0.2rem;
+    }
   }
 
   /* Blockquotes */
   blockquote {
-    font-size: 0.92rem;
+    font-size: 0.88rem;
+    line-height: 1.7;
+  }
+
+  /* Horizontal rule spacing */
+  hr {
+    margin: 2rem 0;
   }
 }
 
-/* TOC sidebar font */
+/* Sidebar & metadata */
 #toc-wrapper {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
+}
+
+.post-meta {
+  font-size: 0.8rem;
+}
+
+/* Dark mode text color override */
+[data-mode="dark"] .post-content {
+  color: #d1d1d1;
 }
