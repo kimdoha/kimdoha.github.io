@@ -77,6 +77,50 @@ h1.dynamic-title,
   }
 }
 
+/* ===== Home page post list ===== */
+#post-list {
+  .card-wrapper {
+    margin-bottom: 1rem;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    border-radius: 8px;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+  }
+
+  /* Post title on home */
+  .card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  /* Post preview text */
+  .card-text {
+    font-size: 0.84rem;
+    line-height: 1.65;
+    color: #555;
+  }
+
+  /* Post metadata (date, categories) */
+  .post-meta {
+    font-size: 0.76rem;
+  }
+}
+
+/* Sidebar */
+#sidebar {
+  .site-title {
+    font-size: 1.1rem;
+  }
+
+  .site-subtitle {
+    font-size: 0.78rem;
+  }
+}
+
 /* Sidebar & metadata */
 #toc-wrapper {
   font-size: 0.78rem;
@@ -86,7 +130,22 @@ h1.dynamic-title,
   font-size: 0.8rem;
 }
 
-/* Dark mode text color override */
-[data-mode="dark"] .post-content {
-  color: #d1d1d1;
+/* Popular tags in sidebar */
+#tags {
+  font-size: 0.78rem;
+}
+
+/* Dark mode overrides */
+[data-mode="dark"] {
+  .post-content {
+    color: #d1d1d1;
+  }
+
+  #post-list .card-text {
+    color: #aaa;
+  }
+
+  #post-list .card-wrapper:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
 }
