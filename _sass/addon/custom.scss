@@ -199,7 +199,9 @@ div.highlighter-rouge {
 div[class^="language-"] .highlight {
   background-color: #282c34 !important;
 
-  pre {
+  pre,
+  > code {
+    display: block;
     margin: 0 !important;
     padding: 0.9rem 1.15rem !important;
     font-size: 12px !important;
@@ -214,19 +216,15 @@ div[class^="language-"] .highlight {
     font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Menlo, Monaco, Consolas, monospace !important;
     font-weight: 400;
     overflow-x: auto;
-    color: #abb2bf;
+    color: #abb2bf !important;
     -webkit-font-smoothing: auto;
     -moz-osx-font-smoothing: auto;
     tab-size: 4;
   }
 
-  code {
-    font-size: inherit !important;
-    font-family: inherit !important;
-    font-weight: inherit !important;
-    background: none !important;
+  pre code {
+    display: inline;
     padding: 0 !important;
-    color: #abb2bf !important;
   }
 
   /* One Dark syntax highlighting — always applied */
