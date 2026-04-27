@@ -69,6 +69,7 @@ RR에서 범위 조건으로 데이터를 잠그면, 기존 row뿐 아니라 **�
 
 ```sql
 -- RR에서 이 쿼리를 실행하면
+
 SELECT *
   FROM product
  WHERE mall_no = ?
@@ -98,15 +99,18 @@ RC에서는 gap lock이 걸리지 않는다. 기존 row만 잠근다.
 
 ```sql
 -- TX-A: 해당 몰 범위 전체 gap lock
+
 SELECT * FROM product
  WHERE mall_no = ?
    FOR UPDATE;
 
 -- TX-B: gap lock 때문에 대기 → BLOCKED!
+
 INSERT INTO product (mall_no, ...)
 VALUES (?, ...);
 
 -- TX-C: 역시 대기 가능
+
 UPDATE product
    SET sale_status = 'SOLD_OUT'
  WHERE mall_no = ?
@@ -119,15 +123,18 @@ RC에서는:
 
 ```sql
 -- TX-A: 기존 row만 record lock
+
 SELECT * FROM product
  WHERE mall_no = ?
    FOR UPDATE;
 
 -- TX-B: 바로 실행 → OK!
+
 INSERT INTO product (mall_no, ...)
 VALUES (?, ...);
 
 -- TX-C: 해당 row에 lock 잡혀있으면 대기, 아니면 바로 실행
+
 UPDATE product
    SET ...
  WHERE product_no = ?;
@@ -143,10 +150,12 @@ UPDATE product
 
 ```kotlin
 // 재고 업데이트 흐름
+
 suspend fun updateStock(
     params: List<StockParam>,
     mallNo: Int,
 ) {
+
     // 1. 읽기 전용 트랜잭션 — Slave DB
     val options = readOnlyTransaction {
         optionRepository.findByOptionNos(
@@ -172,6 +181,7 @@ suspend fun updateStock(
 
 ```kotlin
 // 대량 재고 upsert 흐름
+
 suspend fun bulkUpsertStocks(
     stocks: List<StockModel>,
 ) {
@@ -224,22 +234,27 @@ HikariCP가 커넥션 풀에서 새 커넥션을 만들 때만 SET 명령을 실
 RR이 phantom read를 "대부분" 방지한다고 하는데, 완전하지는 않다.
 
 ```sql
--- TX-A
+-- TX-A: 조회
+
 SELECT * FROM product
  WHERE price BETWEEN 100 AND 200;
 -- → 3건
 
--- TX-B
-INSERT INTO product (no, price) VALUES (99, 150);
+-- TX-B: 다른 트랜잭션이 INSERT 후 COMMIT
+
+INSERT INTO product (no, price)
+VALUES (99, 150);
 COMMIT;
 
 -- TX-A: UPDATE는 current read (최신 데이터)
 -- → B가 삽입한 row를 A의 스냅샷에 편입
+
 UPDATE product
    SET price = price
  WHERE no = 99;
 
 -- TX-A: 다시 조회
+
 SELECT * FROM product
  WHERE price BETWEEN 100 AND 200;
 -- → 4건 (phantom!)
