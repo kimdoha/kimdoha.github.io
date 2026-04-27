@@ -1,0 +1,56 @@
+/* Custom typography for better readability */
+
+/* Base font size reduction */
+html {
+  font-size: 15px;
+}
+
+/* Post content adjustments */
+.post-content {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  letter-spacing: -0.01em;
+
+  /* Headings */
+  h1 { font-size: 1.75rem; }
+  h2 { font-size: 1.45rem; margin-top: 2.5rem; }
+  h3 { font-size: 1.2rem; margin-top: 2rem; }
+  h4 { font-size: 1.05rem; }
+
+  /* Paragraphs */
+  p {
+    margin-bottom: 1.2rem;
+    word-break: keep-all;
+  }
+
+  /* Code blocks */
+  pre {
+    font-size: 0.82rem;
+    line-height: 1.6;
+  }
+
+  /* Inline code */
+  code:not([class*="language-"]) {
+    font-size: 0.85em;
+  }
+
+  /* Tables */
+  table {
+    font-size: 0.88rem;
+  }
+
+  /* Lists */
+  ul, ol {
+    line-height: 1.75;
+  }
+
+  /* Blockquotes */
+  blockquote {
+    font-size: 0.92rem;
+  }
+}
+
+/* TOC sidebar font */
+#toc-wrapper {
+  font-size: 0.82rem;
+}
