@@ -6,8 +6,8 @@
 :root {
   --bs-font-sans-serif: 'Spoqa Han Sans Neo', -apple-system,
     BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif;
-  --bs-body-font-size: 0.88rem;
-  --bs-body-line-height: 1.6;
+  --bs-body-font-size: 0.78rem;
+  --bs-body-line-height: 1.7;
 
   /* Code block colors — Light */
   --highlight-bg-color: #f4f6f9;
@@ -48,7 +48,7 @@ h1.dynamic-title,
 
 /* ===== Post content ===== */
 .post-content {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   line-height: 1.75;
   letter-spacing: -0.008em;
   color: #2c2c2c;
