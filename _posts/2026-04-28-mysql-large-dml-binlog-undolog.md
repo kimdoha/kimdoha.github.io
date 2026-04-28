@@ -1,6 +1,6 @@
 ---
 title: "MySQL 대량 DML이 위험한 이유 — Binary Log와 Undo Log 관점"
-date: 2026-04-28 18:00:00 +0900
+date: 2026-04-28 09:00:00 +0900
 categories: [Database, MySQL]
 tags: [mysql, binary-log, undo-log, replication, bulk-dml]
 toc: true
