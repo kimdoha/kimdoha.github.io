@@ -469,3 +469,93 @@ html[data-mode="dark"] {
     }
   }
 }
+
+/* =================================
+   Mobile responsive
+   ================================= */
+@media (max-width: 576px) {
+  html {
+    font-size: 12px;
+  }
+
+  h1.dynamic-title,
+  #post-wrapper h1 {
+    font-size: 1.3rem;
+  }
+
+  .post-content {
+    max-width: 100%;
+    font-size: 0.82rem;
+    line-height: 1.7;
+
+    h2 {
+      font-size: 1.1rem;
+      margin-top: 2rem;
+    }
+
+    h3 {
+      font-size: 0.95rem;
+      margin-top: 1.5rem;
+    }
+
+    table {
+      font-size: 0.72rem;
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    blockquote {
+      padding: 0.6rem 0.8rem;
+    }
+  }
+
+  /* 코드블럭 모바일 */
+  div[class^="language-"],
+  div.highlighter-rouge {
+    margin: 1rem 0 !important;
+    border-radius: 8px !important;
+  }
+
+  .highlight,
+  div[class^="language-"] .highlight {
+    pre,
+    > code {
+      font-size: 11px !important;
+      padding: 0.7rem 0.9rem !important;
+      line-height: 1.6 !important;
+    }
+  }
+
+  .code-header {
+    font-size: 10px !important;
+    padding: 0.25rem 0.7rem !important;
+  }
+
+  /* 홈 카드 모바일 */
+  #post-list {
+    .card-body {
+      padding: 0.9rem 1rem;
+    }
+
+    .card-title {
+      font-size: 0.92rem;
+    }
+
+    .card-text {
+      font-size: 0.74rem;
+    }
+  }
+}
+
+@media (max-width: 768px) and (min-width: 577px) {
+  .post-content {
+    max-width: 100%;
+
+    table {
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+}
