@@ -2,7 +2,7 @@
 title: "캐시 톺아보기 (1) — 개념과 읽기 전략"
 date: 2026-04-29 10:00:00 +0900
 categories: [CS, Cache]
-tags: [cache, cpu-cache, memory-hierarchy, cache-aside, read-through, eviction-policy, pareto]
+tags: [cache, cpu-cache, memory-hierarchy, cache-aside, read-through, eviction-policy]
 toc: true
 ---
 
@@ -111,17 +111,6 @@ toc: true
 **시사점**: L1 캐시(0.5ns)와 디스크(10ms)의 차이는 약 **2천만 배**다. 네트워크(150ms)와는 **3억 배** 차이. 이 수치가 "왜 캐시가 필수인가"에 대한 근본적 답이다. 자주 접근하는 데이터를 빠른 계층에 두는 것만으로도 시스템 성능이 극적으로 개선된다.
 
 ---
-
-## Pareto Principle (파레토 법칙)과 캐시
-
-### 80/20 법칙
-
-다이어그램은 두 개의 원형 차트로 **Efforts(노력) vs Results(결과)** 의 비대칭 관계를 보여준다.
-
-- 전체 노력의 **20%**(Important)가 전체 결과의 **80%** 를 만들어낸다.
-- 나머지 80%의 노력은 20%의 결과만 만든다.
-
-**캐시 적용**: 시스템 트래픽에서도 동일한 패턴이 나타난다. 일일 활성 트래픽의 **20%가 전체 사용 패턴의 80%** 를 차지한다. 따라서 이 상위 20% 데이터만 캐시해도 전체 요청의 80%를 캐시에서 처리할 수 있다. 캐시 용량 산정의 기본 근거가 된다.
 
 ---
 
