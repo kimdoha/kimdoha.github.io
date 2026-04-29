@@ -32,7 +32,11 @@ social:
 
 avatar: false
 
-# 사이드바 탭
+collections:
+  tabs:
+    output: true
+    sort_by: order
+
 defaults:
   - scope:
       path: ""
@@ -42,6 +46,12 @@ defaults:
       comments: false
       toc: true
       permalink: /posts/:title/
+  - scope:
+      path: ""
+      type: tabs
+    values:
+      layout: page
+      permalink: /:title/
 
 sass:
   style: compressed
