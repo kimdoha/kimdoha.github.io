@@ -67,7 +67,7 @@ ArrayList의 `next()`에서 `NoSuchElementException`이 발생했는데, 코드�
 
 ---
 
-## 범인: AbstractServerHttpResponse.commitActions
+## 이유: AbstractServerHttpResponse.commitActions
 
 그러면 그 `ArrayList`가 무엇인지 확인해야 한다.
 
