@@ -23,14 +23,14 @@ social:
   links:
     - https://github.com/kimdoha
 
-# Analytics / Comments (필요 시 활성화)
-# analytics:
-#   google:
-#     id: ""
+analytics:
+  google:
+    id: G-QJ30ERLFR2
+
 # comments:
 #   provider: giscus
 
-avatar: false
+avatar: /assets/img/avatar.png
 
 collections:
   tabs:
