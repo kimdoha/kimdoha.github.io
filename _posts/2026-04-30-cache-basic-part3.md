@@ -1,6 +1,6 @@
 ---
 title: "캐시 톺아보기 (3) — 캐시 토폴로지"
-date: 2026-04-30 11:00:00 +0900
+date: 2026-04-30 10:30:00 +0900
 categories: [CS, Cache]
 tags: [cache, local-cache, global-cache, caffeine, redis, cache-topology]
 toc: true
