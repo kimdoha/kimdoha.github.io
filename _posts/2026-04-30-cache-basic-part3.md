@@ -1,8 +1,8 @@
 ---
-title: "캐시 톺아보기 (3) — 토폴로지와 분산 전략"
+title: "캐시 톺아보기 (3) — 토폴로지와 실전 고려사항"
 date: 2026-04-30 10:30:00 +0900
 categories: [CS, Cache]
-tags: [cache, local-cache, global-cache, distributed-cache, redis-cluster, consistent-hashing, caffeine, redis]
+tags: [cache, local-cache, global-cache, distributed-cache, redis-cluster, consistent-hashing, reverse-proxy, caffeine, redis]
 toc: true
 ---
 
@@ -123,3 +123,68 @@ Redis Cluster는 **Hash Slot** 방식으로 데이터를 분산한다. 전체 �
 - 노드가 추가/삭제되면, 평균적으로 **K/n개의 키만 재매핑**된다 (K: 전체 키 수, n: 노드 수).
 - 예: 100만 개의 키, 10개 노드 → 노드 1개 추가 시 약 10만 개(10%)만 이동. 일반 해싱이면 거의 100만 개가 이동.
 - **실제 사용**: Twitter의 Twemproxy가 Redis/Memcached 앞단에서 Consistent Hashing으로 키를 분배한다.
+
+---
+
+## Reverse Proxy 캐시
+
+다이어그램은 AWS의 DynamoDB Accelerator(DAX)를 예시로 보여주며, 이는 Read+Write Through 방식의 Reverse Proxy 캐시다.
+
+```
+Client ──▶ DAX Cluster(Cache) ──▶ DynamoDB
+           (Read Through + Write Through)
+```
+
+**Reverse Proxy 캐시의 동작**:
+- 클라이언트와 Origin 서버 사이에 위치하여, 클라이언트의 모든 요청을 가로챈다.
+- **읽기(Read Through)**: 캐시에 있으면 반환, 없으면 Origin에서 가져와 캐시 후 반환.
+- **쓰기(Write Through)**: 캐시에 먼저 기록하고, 캐시가 즉시 Origin에도 동기 반영한다.
+- 클라이언트는 캐시의 존재를 알 필요가 없다 (**transparent**).
+
+**대표 구현**:
+- **Nginx microcaching**: Nginx가 reverse proxy로서 응답을 짧은 시간(1초 등) 캐싱. 트래픽 급증 시 Origin 부하를 극적으로 줄인다.
+- **CDN** (CloudFront, Akamai 등): 전 세계에 분산된 엣지 서버가 콘텐츠를 캐싱.
+- **DAX**: DynamoDB 전용 인메모리 캐시. API 호환이므로 애플리케이션 코드 변경 없이 적용 가능.
+
+---
+
+## Buffer vs Cache
+
+| 구분 | Cache | Buffer |
+|------|-------|--------|
+| 목적 | **재사용** — 동일 데이터를 반복 접근할 때 속도 향상 | **완충** — 속도 차이가 큰 장치 사이에서 고속 장치의 대기를 줄임 |
+| 데이터 보존 | 조회 후에도 삭제하지 않음 (TTL/Eviction 전까지 유지) | 한 번 소비(전달)하면 삭제 |
+| 용량 | 상대적으로 작음 | 캐시보다 일반적으로 큼 |
+| 대표 예시 | CPU L1~L3 캐시, Redis, CDN | 프린터 버퍼, I/O 버퍼, TCP 송수신 버퍼 |
+
+**프린터 버퍼 예시**: PC가 인쇄 데이터를 프린터 버퍼에 넣으면 PC는 다른 작업을 계속할 수 있다. 프린터는 버퍼에서 데이터를 꺼내 인쇄한다. 버퍼가 없으면 프린터(저속 장치)가 인쇄를 마칠 때까지 PC(고속 장치)가 대기해야 한다.
+
+---
+
+## 캐시 적용 시 고려사항 정리
+
+| 고려사항 | 설명 |
+|---------|------|
+| Capacity | 캐시에 얼마나 많은 데이터를 저장할 것인가? 파레토 법칙(20%)을 기준으로 산정 |
+| Replacement Policy | LRU, LFU, FIFO 중 워크로드 특성에 맞는 정책 선택 |
+| Hit Rate | 목표 적중률 설정 및 모니터링. 적중률이 낮으면 캐시 의미 없음 |
+| Read-Write Strategies | 읽기/쓰기 비율, 일관성 요구 수준에 따라 전략 조합 |
+| Coherence | 분산 환경에서 캐시 간 일관성 유지 방법 |
+| Expiration | TTL 설정 — 너무 짧으면 Miss 증가, 너무 길면 stale 데이터 |
+| Eviction | 용량 초과 시 어떤 항목을 제거할지 정책 설정 |
+
+---
+
+## 캐시 적용이 적합한/부적합한 케이스
+
+**적합한 케이스**:
+- 원본 데이터 접근 시간이 오래 걸리는 경우
+- 반복적으로 동일한 결과를 반환하는 경우
+- 업데이트가 자주 발생하지 않는 데이터
+- 자주 조회되는 데이터 (Hot Data)
+- 입력값과 출력값이 일정한 데이터
+
+**부적합한 케이스**:
+- **잦은 데이터 변경**: 캐시를 갱신하는 비용이 캐시의 이점을 상쇄
+- **데이터 일관성이 실시간으로 보장되어야 하는 경우** (재고, 결제 잔액)
+- **접근 패턴이 균등하여 Hot Data가 없는 경우** (hit ratio가 낮아짐)
