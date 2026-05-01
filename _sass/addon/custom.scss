@@ -9,13 +9,13 @@
   --bs-body-font-size: 0.78rem;
   --bs-body-line-height: 1.7;
 
-  /* Code block colors — Light */
-  --highlight-bg-color: #f4f6f9;
-  --code-color: #2d3339;
-  --code-header-text-color: #8b949e;
-  --code-header-muted-color: #d8dee4;
+  /* Code block colors — always dark (same as dark mode) */
+  --highlight-bg-color: #282c34;
+  --code-color: #abb2bf;
+  --code-header-text-color: #636d83;
+  --code-header-muted-color: #2c313a;
   --inline-code-bg: #eff1f3;
-  --highlighter-rouge-color: #3f596f;
+  --highlighter-rouge-color: #c678dd;
 }
 
 html {
