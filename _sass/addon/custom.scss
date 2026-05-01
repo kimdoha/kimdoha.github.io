@@ -392,17 +392,15 @@ footer {
 }
 
 /* ===== Categories page ===== */
-#categories {
-  .card {
-    border-radius: 8px;
-    border: 1px solid #e8ecf0;
-    overflow: hidden;
-    margin-bottom: 1rem;
-    transition: box-shadow 0.2s ease;
+.card.categories {
+  border-radius: 8px;
+  border: 1px solid #e8ecf0;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  transition: box-shadow 0.2s ease;
 
-    &:hover {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-    }
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   }
 
   .card-header {
@@ -423,51 +421,6 @@ footer {
     }
   }
 
-  .card-body {
-    padding: 0.5rem 0;
-  }
-
-  .list-group-item {
-    font-size: 0.78rem;
-    font-family: 'Spoqa Han Sans Neo', sans-serif;
-    padding: 0.35rem 1rem;
-    border: none;
-    transition: background-color 0.15s ease;
-
-    &:hover {
-      background-color: #f4f6f9;
-    }
-  }
-
-  .badge {
-    font-size: 0.65rem;
-    font-weight: 500;
-    border-radius: 10px;
-    padding: 0.2em 0.55em;
-    background-color: #e8f0fa !important;
-    color: #4a7fb5 !important;
-  }
-}
-
-/* Category page layout */
-.categories {
-  .card {
-    border-radius: 8px;
-    border: 1px solid #e8ecf0;
-    margin-bottom: 1rem;
-  }
-
-  .card-header {
-    font-family: 'Spoqa Han Sans Neo', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 600;
-    background-color: #f8f9fb;
-
-    i {
-      color: #6c9bd2;
-    }
-  }
-
   .list-group-item {
     font-size: 0.78rem;
     font-family: 'Spoqa Han Sans Neo', sans-serif;
@@ -485,51 +438,31 @@ footer {
 #tags {
   font-family: 'Spoqa Han Sans Neo', sans-serif;
 
-  .tag-cloud {
-    a.tag {
-      font-family: 'Spoqa Han Sans Neo', sans-serif !important;
-      font-weight: 500;
-      border-radius: 20px;
-      padding: 0.3em 0.75em;
-      background-color: #f0f4f8;
-      color: #3a6b9f;
-      transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
-      display: inline-block;
-      margin: 0.2rem;
-      text-decoration: none;
-      border: 1px solid transparent;
-
-      &:hover {
-        background-color: #dce8f3;
-        color: #2c5a8a;
-        transform: translateY(-1px);
-        border-color: #c5d7ea;
-      }
-
-      span {
-        font-size: 0.7em;
-        color: #8aa5c1;
-        margin-left: 0.15em;
-      }
-    }
-  }
-}
-
-/* Tag count in tag cloud */
-.tag-cloud .tag sup {
-  font-size: 0.65rem;
-  color: #8aa5c1;
-}
-
-/* Tag page post list */
-#tags ~ .tag-list,
-.tag .post-list {
-  font-family: 'Spoqa Han Sans Neo', sans-serif;
-
-  a {
-    font-size: 0.8rem;
+  a.tag {
+    font-family: 'Spoqa Han Sans Neo', sans-serif !important;
     font-weight: 500;
-    transition: color 0.15s ease;
+    border-radius: 20px;
+    padding: 0.3em 0.75em;
+    background-color: #f0f4f8;
+    color: #3a6b9f;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+    display: inline-block;
+    margin: 0.2rem;
+    text-decoration: none;
+    border: 1px solid transparent;
+
+    &:hover {
+      background-color: #dce8f3;
+      color: #2c5a8a;
+      transform: translateY(-1px);
+      border-color: #c5d7ea;
+    }
+
+    .text-muted {
+      font-size: 0.7em;
+      color: #8aa5c1;
+      margin-left: 0.15em;
+    }
   }
 }
 
@@ -537,16 +470,11 @@ footer {
 #archives {
   font-family: 'Spoqa Han Sans Neo', sans-serif;
 
-  .year {
+  time.year {
     font-size: 1.3rem;
     font-weight: 800;
     letter-spacing: -0.02em;
     color: #1a1a1a;
-  }
-
-  /* Timeline accent */
-  .timeline {
-    border-left-color: #6c9bd2;
   }
 
   li {
@@ -579,8 +507,8 @@ footer {
 }
 
 /* ===== Page content (About, etc.) ===== */
-#page,
-.page-content {
+/* Chirpy page layout: article.px-1 > div.content */
+.content {
   font-family: 'Spoqa Han Sans Neo', sans-serif;
   font-size: 0.78rem;
   line-height: 1.75;
@@ -717,12 +645,9 @@ html[data-mode="dark"] {
   }
 
   /* Dark categories */
-  #categories,
-  .categories {
-    .card {
-      border-color: #2a2f38;
-      background-color: transparent;
-    }
+  .card.categories {
+    border-color: #2a2f38;
+    background-color: transparent;
 
     .card-header {
       background-color: #1c2028;
@@ -742,16 +667,11 @@ html[data-mode="dark"] {
         background-color: #1c2028;
       }
     }
-
-    .badge {
-      background-color: #1e2a3a !important;
-      color: #79a8d4 !important;
-    }
   }
 
   /* Dark tags */
   #tags {
-    .tag-cloud a.tag {
+    a.tag {
       background-color: #1e2a3a;
       color: #8ab4db;
       border-color: transparent;
@@ -762,24 +682,16 @@ html[data-mode="dark"] {
         border-color: #34506e;
       }
 
-      span {
+      .text-muted {
         color: #5a7d9e;
       }
     }
   }
 
-  .tag-cloud .tag sup {
-    color: #5a7d9e;
-  }
-
   /* Dark archives */
   #archives {
-    .year {
+    time.year {
       color: #e0e0e0;
-    }
-
-    .timeline {
-      border-left-color: #5a8cc8;
     }
 
     li {
@@ -802,8 +714,7 @@ html[data-mode="dark"] {
   }
 
   /* Dark page content (About, etc.) */
-  #page,
-  .page-content {
+  .content {
     color: #c8cbd0;
 
     h2 {
@@ -916,8 +827,7 @@ html[data-mode="dark"] {
   }
 
   /* 카테고리 모바일 */
-  #categories,
-  .categories {
+  .card.categories {
     .card-header {
       padding: 0.5rem 0.8rem;
       font-size: 0.8rem;
@@ -930,14 +840,14 @@ html[data-mode="dark"] {
   }
 
   /* 태그 모바일 */
-  #tags .tag-cloud a.tag {
+  #tags a.tag {
     font-size: 0.75rem;
     padding: 0.2em 0.6em;
   }
 
   /* 아카이브 모바일 */
   #archives {
-    .year {
+    time.year {
       font-size: 1.1rem;
     }
 
@@ -953,8 +863,7 @@ html[data-mode="dark"] {
   }
 
   /* 페이지 콘텐츠 모바일 */
-  #page,
-  .page-content {
+  .content {
     max-width: 100%;
     font-size: 0.82rem;
 
