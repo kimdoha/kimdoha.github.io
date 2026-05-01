@@ -391,6 +391,273 @@ footer {
   font-size: 0.72rem;
 }
 
+/* ===== Categories page ===== */
+#categories {
+  .card {
+    border-radius: 8px;
+    border: 1px solid #e8ecf0;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    transition: box-shadow 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+  }
+
+  .card-header {
+    font-family: 'Spoqa Han Sans Neo', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    padding: 0.65rem 1rem;
+    background-color: #f8f9fb;
+    border-bottom: 1px solid #e8ecf0;
+
+    i {
+      color: #6c9bd2;
+    }
+
+    .text-muted {
+      font-size: 0.72rem;
+    }
+  }
+
+  .card-body {
+    padding: 0.5rem 0;
+  }
+
+  .list-group-item {
+    font-size: 0.78rem;
+    font-family: 'Spoqa Han Sans Neo', sans-serif;
+    padding: 0.35rem 1rem;
+    border: none;
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background-color: #f4f6f9;
+    }
+  }
+
+  .badge {
+    font-size: 0.65rem;
+    font-weight: 500;
+    border-radius: 10px;
+    padding: 0.2em 0.55em;
+    background-color: #e8f0fa !important;
+    color: #4a7fb5 !important;
+  }
+}
+
+/* Category page layout */
+.categories {
+  .card {
+    border-radius: 8px;
+    border: 1px solid #e8ecf0;
+    margin-bottom: 1rem;
+  }
+
+  .card-header {
+    font-family: 'Spoqa Han Sans Neo', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background-color: #f8f9fb;
+
+    i {
+      color: #6c9bd2;
+    }
+  }
+
+  .list-group-item {
+    font-size: 0.78rem;
+    font-family: 'Spoqa Han Sans Neo', sans-serif;
+    padding: 0.35rem 1rem;
+    border: none;
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background-color: #f4f6f9;
+    }
+  }
+}
+
+/* ===== Tags page ===== */
+#tags {
+  font-family: 'Spoqa Han Sans Neo', sans-serif;
+
+  .tag-cloud {
+    a.tag {
+      font-family: 'Spoqa Han Sans Neo', sans-serif !important;
+      font-weight: 500;
+      border-radius: 20px;
+      padding: 0.3em 0.75em;
+      background-color: #f0f4f8;
+      color: #3a6b9f;
+      transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+      display: inline-block;
+      margin: 0.2rem;
+      text-decoration: none;
+      border: 1px solid transparent;
+
+      &:hover {
+        background-color: #dce8f3;
+        color: #2c5a8a;
+        transform: translateY(-1px);
+        border-color: #c5d7ea;
+      }
+
+      span {
+        font-size: 0.7em;
+        color: #8aa5c1;
+        margin-left: 0.15em;
+      }
+    }
+  }
+}
+
+/* Tag count in tag cloud */
+.tag-cloud .tag sup {
+  font-size: 0.65rem;
+  color: #8aa5c1;
+}
+
+/* Tag page post list */
+#tags ~ .tag-list,
+.tag .post-list {
+  font-family: 'Spoqa Han Sans Neo', sans-serif;
+
+  a {
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: color 0.15s ease;
+  }
+}
+
+/* ===== Archives page ===== */
+#archives {
+  font-family: 'Spoqa Han Sans Neo', sans-serif;
+
+  .year {
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #1a1a1a;
+  }
+
+  /* Timeline accent */
+  .timeline {
+    border-left-color: #6c9bd2;
+  }
+
+  li {
+    transition: background-color 0.15s ease;
+    border-radius: 4px;
+
+    &:hover {
+      background-color: #f8f9fb;
+    }
+
+    a {
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      color: #2c2c2c;
+      transition: color 0.15s ease;
+
+      &:hover {
+        color: #6c9bd2;
+      }
+    }
+
+    .date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: #999;
+      letter-spacing: 0.02em;
+    }
+  }
+}
+
+/* ===== Page content (About, etc.) ===== */
+#page,
+.page-content {
+  font-family: 'Spoqa Han Sans Neo', sans-serif;
+  font-size: 0.78rem;
+  line-height: 1.75;
+  letter-spacing: -0.008em;
+  color: #2c2c2c;
+  max-width: 700px;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+
+  h2 {
+    font-size: 1.2rem;
+    font-weight: 800;
+    margin-top: 2.8rem;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid #e8e8e8;
+    letter-spacing: -0.02em;
+    color: #111;
+  }
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-top: 2rem;
+    margin-bottom: 0.6rem;
+    letter-spacing: -0.015em;
+    color: #1a1a1a;
+  }
+
+  p {
+    margin-bottom: 1.05rem;
+  }
+
+  strong {
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+
+  ul, ol {
+    line-height: 1.85;
+    margin-bottom: 1rem;
+    padding-left: 1.3rem;
+
+    li {
+      margin-bottom: 0.25rem;
+    }
+
+    li::marker {
+      color: #6c9bd2;
+    }
+  }
+
+  blockquote {
+    font-size: 0.85rem;
+    line-height: 1.75;
+    border-left: 3px solid #6c9bd2;
+    background-color: #f8f9fb;
+    padding: 0.75rem 1rem;
+    border-radius: 0 6px 6px 0;
+    margin: 1.2rem 0;
+  }
+
+  /* Inline code in pages */
+  code.highlighter-rouge,
+  code:not([class*="language-"]) {
+    font-size: 0.8em !important;
+    padding: 0.15em 0.45em !important;
+    border-radius: 4px !important;
+    background-color: #f0f2f5 !important;
+    color: #c7254e !important;
+    font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace !important;
+    font-weight: 400;
+    border: none;
+    word-break: break-word;
+  }
+}
+
 /* =================================
    Dark mode
    ================================= */
@@ -447,6 +714,122 @@ html[data-mode="dark"] {
     background-color: #262a33 !important;
     color: #e06c75 !important;
     border-color: #30363d;
+  }
+
+  /* Dark categories */
+  #categories,
+  .categories {
+    .card {
+      border-color: #2a2f38;
+      background-color: transparent;
+    }
+
+    .card-header {
+      background-color: #1c2028;
+      border-bottom-color: #2a2f38;
+      color: #c8cbd0;
+
+      i {
+        color: #5a8cc8;
+      }
+    }
+
+    .list-group-item {
+      background-color: transparent;
+      color: #c8cbd0;
+
+      &:hover {
+        background-color: #1c2028;
+      }
+    }
+
+    .badge {
+      background-color: #1e2a3a !important;
+      color: #79a8d4 !important;
+    }
+  }
+
+  /* Dark tags */
+  #tags {
+    .tag-cloud a.tag {
+      background-color: #1e2a3a;
+      color: #8ab4db;
+      border-color: transparent;
+
+      &:hover {
+        background-color: #253548;
+        color: #a5cce8;
+        border-color: #34506e;
+      }
+
+      span {
+        color: #5a7d9e;
+      }
+    }
+  }
+
+  .tag-cloud .tag sup {
+    color: #5a7d9e;
+  }
+
+  /* Dark archives */
+  #archives {
+    .year {
+      color: #e0e0e0;
+    }
+
+    .timeline {
+      border-left-color: #5a8cc8;
+    }
+
+    li {
+      &:hover {
+        background-color: #1c2028;
+      }
+
+      a {
+        color: #c8cbd0;
+
+        &:hover {
+          color: #79a8d4;
+        }
+      }
+
+      .date {
+        color: #6e7681;
+      }
+    }
+  }
+
+  /* Dark page content (About, etc.) */
+  #page,
+  .page-content {
+    color: #c8cbd0;
+
+    h2 {
+      color: #e0e0e0;
+      border-bottom-color: #333840;
+    }
+
+    h3 {
+      color: #e0e0e0;
+    }
+
+    strong {
+      color: #e4e4e4;
+    }
+
+    blockquote {
+      background-color: #181a22;
+      border-left-color: #5a8cc8;
+    }
+
+    code.highlighter-rouge,
+    code:not([class*="language-"]) {
+      background-color: #262a33 !important;
+      color: #e06c75 !important;
+      border-color: #30363d;
+    }
   }
 
   /* Dark home cards */
@@ -530,6 +913,64 @@ html[data-mode="dark"] {
   .code-header {
     font-size: 10px !important;
     padding: 0.25rem 0.7rem !important;
+  }
+
+  /* 카테고리 모바일 */
+  #categories,
+  .categories {
+    .card-header {
+      padding: 0.5rem 0.8rem;
+      font-size: 0.8rem;
+    }
+
+    .list-group-item {
+      padding: 0.3rem 0.8rem;
+      font-size: 0.75rem;
+    }
+  }
+
+  /* 태그 모바일 */
+  #tags .tag-cloud a.tag {
+    font-size: 0.75rem;
+    padding: 0.2em 0.6em;
+  }
+
+  /* 아카이브 모바일 */
+  #archives {
+    .year {
+      font-size: 1.1rem;
+    }
+
+    li {
+      a {
+        font-size: 0.78rem;
+      }
+
+      .date {
+        font-size: 0.65rem;
+      }
+    }
+  }
+
+  /* 페이지 콘텐츠 모바일 */
+  #page,
+  .page-content {
+    max-width: 100%;
+    font-size: 0.82rem;
+
+    h2 {
+      font-size: 1.1rem;
+      margin-top: 2rem;
+    }
+
+    h3 {
+      font-size: 0.95rem;
+      margin-top: 1.5rem;
+    }
+
+    blockquote {
+      padding: 0.6rem 0.8rem;
+    }
   }
 
   /* 홈 카드 모바일 */

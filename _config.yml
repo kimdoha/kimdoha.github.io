@@ -30,7 +30,7 @@ analytics:
 # comments:
 #   provider: giscus
 
-avatar: /assets/img/avatar.png
+# avatar: /assets/img/avatar.png
 
 collections:
   tabs:
