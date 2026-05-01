@@ -12,6 +12,7 @@ description: >-
 url: "https://kimdoha.github.io"
 baseurl: ""
 
+future: true
 paginate: 10
 
 github:
