@@ -470,16 +470,17 @@ footer {
   a.tag {
     font-family: 'Spoqa Han Sans Neo', sans-serif !important;
     font-weight: 500;
-    font-size: 0.82rem;
-    border-radius: 20px;
-    padding: 0.3em 0.75em;
+    font-size: 0.72rem;
+    border-radius: 14px;
+    padding: 0.2em 0.6em;
     background-color: #f0f4f8;
     color: #3a6b9f;
     transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
     display: inline-block;
-    margin: 0.2rem;
+    margin: 0.15rem;
     text-decoration: none;
     border: 1px solid transparent;
+    line-height: 1.6;
 
     &:hover {
       background-color: #dce8f3;
@@ -491,7 +492,7 @@ footer {
     .text-muted {
       font-size: 0.7em;
       color: #8aa5c1 !important;
-      margin-left: 0.2em;
+      margin-left: 0.15em;
     }
   }
 }
