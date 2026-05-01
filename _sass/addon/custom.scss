@@ -416,17 +416,46 @@ footer {
       color: #6c9bd2;
     }
 
+    a {
+      color: #2c2c2c;
+      font-weight: 600;
+      transition: color 0.15s ease;
+
+      &:hover {
+        color: #6c9bd2;
+      }
+    }
+
     .text-muted {
       font-size: 0.72rem;
+      color: #888 !important;
     }
   }
 
   .list-group-item {
     font-size: 0.78rem;
     font-family: 'Spoqa Han Sans Neo', sans-serif;
-    padding: 0.35rem 1rem;
+    padding: 0.4rem 1rem;
     border: none;
     transition: background-color 0.15s ease;
+
+    i {
+      color: #6c9bd2;
+    }
+
+    a {
+      color: #444;
+      transition: color 0.15s ease;
+
+      &:hover {
+        color: #6c9bd2;
+      }
+    }
+
+    .text-muted {
+      color: #999 !important;
+      font-size: 0.72rem;
+    }
 
     &:hover {
       background-color: #f4f6f9;
@@ -441,6 +470,7 @@ footer {
   a.tag {
     font-family: 'Spoqa Han Sans Neo', sans-serif !important;
     font-weight: 500;
+    font-size: 0.82rem;
     border-radius: 20px;
     padding: 0.3em 0.75em;
     background-color: #f0f4f8;
@@ -460,8 +490,8 @@ footer {
 
     .text-muted {
       font-size: 0.7em;
-      color: #8aa5c1;
-      margin-left: 0.15em;
+      color: #8aa5c1 !important;
+      margin-left: 0.2em;
     }
   }
 }
@@ -480,9 +510,10 @@ footer {
   li {
     transition: background-color 0.15s ease;
     border-radius: 4px;
+    padding: 0.2rem 0.4rem;
 
     &:hover {
-      background-color: #f8f9fb;
+      background-color: #f4f6f9;
     }
 
     a {
@@ -499,16 +530,24 @@ footer {
 
     .date {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      color: #999;
+      font-size: 0.72rem;
       letter-spacing: 0.02em;
+
+      &.day {
+        color: #555;
+        font-weight: 500;
+      }
+
+      &.month {
+        color: #999 !important;
+      }
     }
   }
 }
 
 /* ===== Page content (About, etc.) ===== */
-/* Chirpy page layout: article.px-1 > div.content */
-.content {
+/* Scoped to article to avoid sidebar .content contamination */
+article .content {
   font-family: 'Spoqa Han Sans Neo', sans-serif;
   font-size: 0.78rem;
   line-height: 1.75;
@@ -598,11 +637,23 @@ html[data-mode="dark"] {
   --inline-code-bg: #262a33;
   --highlighter-rouge-color: #79c0ff;
 
+  /* Dark page title */
+  h1.dynamic-title,
+  #post-wrapper h1 {
+    color: #e2e4e8;
+  }
+
+  /* Dark post content */
   .post-content {
     color: #c8cbd0;
 
     h2 {
+      color: #e2e4e8;
       border-bottom-color: #333840;
+    }
+
+    h3, h4 {
+      color: #dcdfe4;
     }
 
     strong {
@@ -649,6 +700,10 @@ html[data-mode="dark"] {
     border-color: #2a2f38;
     background-color: transparent;
 
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
     .card-header {
       background-color: #1c2028;
       border-bottom-color: #2a2f38;
@@ -657,11 +712,39 @@ html[data-mode="dark"] {
       i {
         color: #5a8cc8;
       }
+
+      a {
+        color: #dcdfe4;
+
+        &:hover {
+          color: #79a8d4;
+        }
+      }
+
+      .text-muted {
+        color: #6e7681 !important;
+      }
     }
 
     .list-group-item {
       background-color: transparent;
       color: #c8cbd0;
+
+      i {
+        color: #5a8cc8;
+      }
+
+      a {
+        color: #b0b6bf;
+
+        &:hover {
+          color: #79a8d4;
+        }
+      }
+
+      .text-muted {
+        color: #6e7681 !important;
+      }
 
       &:hover {
         background-color: #1c2028;
@@ -683,7 +766,7 @@ html[data-mode="dark"] {
       }
 
       .text-muted {
-        color: #5a7d9e;
+        color: #5a7d9e !important;
       }
     }
   }
@@ -691,7 +774,7 @@ html[data-mode="dark"] {
   /* Dark archives */
   #archives {
     time.year {
-      color: #e0e0e0;
+      color: #e2e4e8;
     }
 
     li {
@@ -700,34 +783,44 @@ html[data-mode="dark"] {
       }
 
       a {
-        color: #c8cbd0;
+        color: #c0c5cc;
 
         &:hover {
           color: #79a8d4;
         }
       }
 
-      .date {
-        color: #6e7681;
+      .date.day {
+        color: #8b949e;
+      }
+
+      .date.month {
+        color: #6e7681 !important;
       }
     }
   }
 
   /* Dark page content (About, etc.) */
-  .content {
+  article .content {
     color: #c8cbd0;
 
     h2 {
-      color: #e0e0e0;
+      color: #e2e4e8;
       border-bottom-color: #333840;
     }
 
     h3 {
-      color: #e0e0e0;
+      color: #dcdfe4;
     }
 
     strong {
       color: #e4e4e4;
+    }
+
+    ul, ol {
+      li::marker {
+        color: #5a8cc8;
+      }
     }
 
     blockquote {
@@ -863,7 +956,7 @@ html[data-mode="dark"] {
   }
 
   /* 페이지 콘텐츠 모바일 */
-  .content {
+  article .content {
     max-width: 100%;
     font-size: 0.82rem;
 
