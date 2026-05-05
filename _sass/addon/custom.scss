@@ -626,6 +626,48 @@ article .content {
   }
 }
 
+/* =============================================
+   Light mode — force dark code blocks
+   Chirpy 테마가 html:not([data-mode]) 셀렉터로
+   라이트 코드블럭을 적용하므로, 동일 셀렉터로 덮어씀
+   ============================================= */
+html:not([data-mode]),
+html[data-mode="light"] {
+  .highlight,
+  div[class^="language-"] .highlight {
+    background-color: #282c34 !important;
+    color: #abb2bf !important;
+
+    pre,
+    > code {
+      background-color: transparent !important;
+      color: #abb2bf !important;
+    }
+
+    /* One Dark syntax tokens */
+    .k, .kd, .kn, .kp, .kr, .kt, .kv { color: #c678dd !important; }
+    .s, .sa, .s1, .s2, .sb, .sc, .sd, .sh, .sx, .dl, .se, .ss { color: #98c379 !important; }
+    .c, .c1, .cm, .cs, .cp { color: #5c6370 !important; font-style: italic; }
+    .nf, .nb { color: #61afef !important; }
+    .nc, .nn { color: #e5c07b !important; }
+    .mi, .mf, .mh, .il { color: #d19a66 !important; }
+    .o, .p { color: #abb2bf !important; }
+    .na { color: #d19a66 !important; }
+    .nt { color: #e06c75 !important; }
+    .nl { color: #61afef !important; }
+    .ni, .ne { color: #e06c75 !important; }
+    .nv, .vi, .vc, .vg { color: #e06c75 !important; }
+    .w { color: #abb2bf !important; }
+    .err { color: #e06c75 !important; background-color: transparent !important; }
+  }
+
+  .code-header {
+    background-color: #21252b !important;
+    border-bottom-color: #2c313a !important;
+    color: #636d83 !important;
+  }
+}
+
 /* =================================
    Dark mode
    ================================= */
