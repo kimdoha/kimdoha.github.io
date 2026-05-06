@@ -11,6 +11,7 @@ order: 4
 
 ### Tech Stack
 
-- **Backend**: Kotlin, Spring Boot, JPA/QueryDSL, MySQL
-- **Messaging**: Kafka, Redis
+- **Backend**: Kotlin, Spring WebFlux, Kotlin Coroutines
+- **Data**: JOOQ, QueryDSL, JPA, MySQL, MongoDB, Elasticsearch
+- **Messaging**: Reactor Kafka, Redis
 - **Infra**: Kubernetes, Docker, GitHub Actions
