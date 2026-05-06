@@ -1,5 +1,5 @@
 ---
-title: "카프카 톺아보기 2 — Rebalancing의 원리와 장애 복구 전략"
+title: "카프카 톺아보기 (2) — Rebalancing의 원리와 장애 복구 전략"
 date: 2026-05-06 10:00:00 +0900
 categories: [Kafka]
 tags: [kafka, rebalancing, consumer-group, static-membership, cooperative-rebalancing]

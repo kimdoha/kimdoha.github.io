@@ -1,5 +1,5 @@
 ---
-title: "카프카 톺아보기 — Consumer Group, Offset, 파티션의 진짜 동작"
+title: "카프카 톺아보기 (1) — Consumer Group, Offset, 파티션의 진짜 동작"
 date: 2026-05-02 10:00:00 +0900
 categories: [Kafka]
 tags: [kafka, consumer-group, offset, partition, reactor, kotlin-coroutines]
