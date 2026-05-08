@@ -292,7 +292,7 @@ div[class^="language-"] .highlight {
   > code {
     display: block;
     margin: 0 !important;
-    padding: 0.9rem 1.15rem !important;
+    padding: 0.9rem 1.5rem !important;
     font-size: 12px !important;
     line-height: 1.7 !important;
     white-space: pre !important;
@@ -362,6 +362,21 @@ div[class^="language-"] .highlight {
       background: transparent !important;
     }
   }
+}
+
+/* Raw <pre> blocks (HTML diagrams, etc.) */
+.post-content > pre {
+  background-color: #282c34 !important;
+  color: #abb2bf !important;
+  padding: 0.9rem 1.5rem !important;
+  border-radius: 10px;
+  font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  overflow-x: auto;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.08);
+  margin: 1.4rem 0;
 }
 
 /* Inline code */
@@ -797,7 +812,7 @@ article .content {
     pre,
     > code {
       font-size: 11px !important;
-      padding: 0.7rem 0.9rem !important;
+      padding: 0.7rem 1.2rem !important;
       line-height: 1.6 !important;
     }
   }
