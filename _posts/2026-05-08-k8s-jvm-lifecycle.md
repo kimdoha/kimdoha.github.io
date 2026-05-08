@@ -5,8 +5,6 @@ categories: [JVM, Kubernetes]
 tags: [kubernetes, jvm, spring-boot, probe, graceful-shutdown, hpa, jit-warmup, oom, monitoring, lifecycle]
 ---
 
-# K8S는 JVM 앱을 어떻게 살리고 죽이는가 — Probe부터 OOM Kill까지
-
 > **TL;DR**: K8S는 JVM 앱을 배포하고, Probe로 생사를 판단하고, 트래픽을 제어하고, 종료 시 정리할 시간을 준다. 이 과정에서 JVM 특유의 느린 시작, 좀비 상태, Warmup 문제를 이해하지 못하면 장애로 이어진다.
 
 ---
@@ -343,16 +341,3 @@ HPA(Horizontal Pod Autoscaler)는 메트릭 기반으로 Pod 수를 자동 조�
 
 > **근거**: BlaBlaCar Engineering — *"JIT 컴파일이 안 된 새 Pod는 CPU를 과도하게 소모하여 HPA가 추가 스케일 아웃을 유발한다."* Kubernetes HPA 문서 — *"cpuInitializationPeriod(기본 5분) 동안 unready Pod의 CPU 사용량을 무시하는 보호 메커니즘이 있다."* ([BlaBlaCar - Java and Kubernetes warmup](https://medium.com/blablacar/warm-up-the-relationship-between-java-and-kubernetes-7fc5741f9a23), [Kubernetes - HPA](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/))
 
----
-
-## Sources
-
-- [Kubernetes - Cluster Architecture](https://kubernetes.io/docs/concepts/architecture/)
-- [Kubernetes - kube-scheduler](https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/)
-- [Kubernetes - Configure Liveness, Readiness and Startup Probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)
-- [Kubernetes - Horizontal Pod Autoscaling](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)
-- [Spring.io - Liveness and Readiness Probes with Spring Boot](https://spring.io/blog/2020/03/25/liveness-and-readiness-probes-with-spring-boot/)
-- [Spring Boot - Metrics](https://docs.spring.io/spring-boot/reference/actuator/metrics.html)
-- [Google Cloud - Kubernetes best practices: terminating with grace](https://cloud.google.com/blog/products/containers-kubernetes/kubernetes-best-practices-terminating-with-grace)
-- [CNCF - Decoding the pod termination lifecycle in Kubernetes](https://www.cncf.io/blog/2024/12/19/decoding-the-pod-termination-lifecycle-in-kubernetes-a-comprehensive-guide/)
-- [BlaBlaCar - Warm up the relationship between Java and Kubernetes](https://medium.com/blablacar/warm-up-the-relationship-between-java-and-kubernetes-7fc5741f9a23)
