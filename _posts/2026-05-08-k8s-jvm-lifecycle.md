@@ -11,7 +11,7 @@ tags: [kubernetes, jvm, spring-boot, probe, graceful-shutdown, hpa, jit-warmup, 
 
 ## 1. 클러스터 구조
 
-```
+```text
 ┌────────────────────────── Kubernetes Cluster ──────────────────────────┐
 │                                                                        │
 │  ┌─── Control Plane ───┐     ┌──────── Worker Node ────────────────┐  │
@@ -40,7 +40,7 @@ tags: [kubernetes, jvm, spring-boot, probe, graceful-shutdown, hpa, jit-warmup, 
 
 K8S가 JVM 앱을 **어떻게 살리는지** — 배포 요청부터 트래픽 유입까지의 전체 과정이다.
 
-```
+```text
 ① 배포 요청
    kubectl apply / CI-CD pipeline
          │
@@ -87,7 +87,7 @@ JVM 앱은 시작이 느리기 때문에 Probe 설정이 중요하다. 각 Probe
 
 Startup Probe가 성공할 때까지 Liveness/Readiness Probe는 **비활성화 상태**를 유지한다.
 
-```
+```text
 Startup Probe가 없을 때:
 
   Pod 시작 → Spring Context 초기화 중 (30초 소요)
@@ -118,7 +118,7 @@ Startup Probe가 있을 때:
 
 실패 시 kubelet이 컨테이너를 **재시작**한다. 프로세스가 살아있지만 정상 동작하지 않는 **좀비 상태**를 감지하는 것이 목적이다.
 
-```
+```text
 JVM OOM 후 좀비 상태 — Liveness Probe가 없을 때:
 
   Client ──요청──▶ Pod (좀비)
@@ -149,7 +149,7 @@ Liveness Probe가 있을 때:
 
 실패 시 Service의 Endpoint 목록에서 **제거**된다. 재시작이 아니라 **트래픽만 끊는다**. 일시적으로 요청을 처리할 수 없는 상황에서 다른 정상 Pod로 트래픽을 우회시키는 것이 목적이다.
 
-```
+```text
 DB 장애 시 — Readiness Probe가 없을 때:
 
   ┌── Service (kube-proxy) ──────────────────────────────────┐
@@ -182,7 +182,7 @@ Readiness Probe가 있을 때:
 
 ### Liveness vs Readiness를 잘못 쓰면?
 
-```
+```text
 잘못된 설정: Liveness Probe에 DB health check를 넣은 경우
 
   DB 일시적 장애 (30초간)
@@ -240,7 +240,7 @@ readinessProbe:
 
 Pod 삭제 시 다음이 **병렬로** 시작된다:
 
-```
+```text
 ┌─ Track A: 네트워크 ──────────────────┐  ┌─ Track B: 컨테이너 종료 ─────────────────────┐
 │                                       │  │                                               │
 │  Endpoint에서 Pod 제거                │  │  terminationGracePeriodSeconds 카운트다운 시작 │
@@ -265,7 +265,7 @@ Pod 삭제 시 다음이 **병렬로** 시작된다:
 
 Track A(규칙 업데이트)보다 Track B(앱 종료)가 먼저 끝나면, kube-proxy가 아직 규칙을 안 바꿔서 이미 죽은 Pod로 요청이 간다. → **`preStop: sleep 10`**으로 해결.
 
-```
+```text
 타이밍 공식:
   terminationGracePeriodSeconds >= preStop(10s) + Spring shutdown(25s) + 여유(5s) = 40s 이상
   기본값 30초가 위험한 이유: preStop(10s) + Spring(30s) = 40s > 30s → SIGKILL로 강제 종료됨
@@ -297,7 +297,7 @@ spec:
 
 ## 5. 모니터링 — JVM Metrics
 
-```
+```text
 Spring Boot App
   └─ Actuator + Micrometer → /actuator/prometheus 엔드포인트
                                        │
@@ -323,7 +323,7 @@ JVM 앱에서 필수로 관찰해야 하는 메트릭:
 
 HPA(Horizontal Pod Autoscaler)는 메트릭 기반으로 Pod 수를 자동 조절한다. 그런데 JVM 앱에서는 **Cold Start 문제**가 있다.
 
-```
+```text
 트래픽 스파이크
   → HPA가 새 Pod 생성
     → 새 Pod의 JVM은 JIT 미컴파일 상태 → CPU 급등
