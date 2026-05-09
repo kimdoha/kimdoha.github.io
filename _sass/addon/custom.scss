@@ -1,6 +1,7 @@
 /* ===== Font Imports ===== */
 @import url('https://spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css');
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&display=swap');
 
 /* ===== Color variables (light default) ===== */
 :root {
@@ -16,43 +17,43 @@
   --code-header-muted-color: #2c313a;
   --highlighter-rouge-color: #c678dd;
 
-  /* Custom theme colors — light */
-  --ct-text: #2c2c2c;
-  --ct-heading: #111;
-  --ct-heading-sub: #1a1a1a;
-  --ct-strong: #1a1a1a;
-  --ct-muted: #666;
-  --ct-meta: #888;
-  --ct-meta-light: #999;
-  --ct-border: #e8e8e8;
-  --ct-border-table: #e0e0e0;
-  --ct-border-table-head: #d0d7de;
-  --ct-border-table-row: #eaecef;
-  --ct-bg-table-head: #f5f7fa;
-  --ct-bg-table-hover: #f8f9fb;
-  --ct-bg-blockquote: #f8f9fb;
-  --ct-border-blockquote: #6c9bd2;
-  --ct-accent: #6c9bd2;
-  --ct-inline-code-bg: #f0f2f5;
-  --ct-inline-code-color: #c7254e;
-  --ct-card-border: #eaecef;
-  --ct-card-hover-border: #d0d7de;
-  --ct-card-title: #1a1a1a;
-  --ct-card-text: #666;
-  --ct-cat-header-bg: #f8f9fb;
-  --ct-cat-header-border: #e8ecf0;
-  --ct-cat-item-text: #444;
-  --ct-cat-item-hover-bg: #f4f6f9;
-  --ct-tag-bg: #f0f4f8;
-  --ct-tag-color: #3a6b9f;
-  --ct-tag-hover-bg: #dce8f3;
-  --ct-tag-hover-color: #2c5a8a;
-  --ct-tag-hover-border: #c5d7ea;
-  --ct-tag-muted: #8aa5c1;
-  --ct-archive-link: #2c2c2c;
-  --ct-archive-day: #555;
-  --ct-archive-month: #999;
-  --ct-archive-hover-bg: #f4f6f9;
+  /* Custom theme colors — light (Anthropic Base) */
+  --ct-text: #141413;
+  --ct-heading: #141413;
+  --ct-heading-sub: #141413;
+  --ct-strong: #141413;
+  --ct-muted: #5e5d59;
+  --ct-meta: #87867f;
+  --ct-meta-light: #b0aea5;
+  --ct-border: #d1cfc5;
+  --ct-border-table: #d1cfc5;
+  --ct-border-table-head: #c5bfb3;
+  --ct-border-table-row: #e3ddd3;
+  --ct-bg-table-head: #f0eee6;
+  --ct-bg-table-hover: #f5f3ed;
+  --ct-bg-blockquote: #f0eee6;
+  --ct-border-blockquote: #d97757;
+  --ct-accent: #d97757;
+  --ct-inline-code-bg: #ede9e0;
+  --ct-inline-code-color: #8b4513;
+  --ct-card-border: #d1cfc5;
+  --ct-card-hover-border: #c5bfb3;
+  --ct-card-title: #141413;
+  --ct-card-text: #5e5d59;
+  --ct-cat-header-bg: #f0eee6;
+  --ct-cat-header-border: #d1cfc5;
+  --ct-cat-item-text: #3d3d3a;
+  --ct-cat-item-hover-bg: #f0eee6;
+  --ct-tag-bg: #ede9e0;
+  --ct-tag-color: #87867f;
+  --ct-tag-hover-bg: #e3ddd3;
+  --ct-tag-hover-color: #d97757;
+  --ct-tag-hover-border: #d97757;
+  --ct-tag-muted: #b0aea5;
+  --ct-archive-link: #141413;
+  --ct-archive-day: #5e5d59;
+  --ct-archive-month: #87867f;
+  --ct-archive-hover-bg: #f0eee6;
 }
 
 /* ===== Dark mode variables ===== */
@@ -63,42 +64,42 @@
   --code-header-muted-color: #30363d;
   --highlighter-rouge-color: #79c0ff;
 
-  --ct-text: #c8cbd0;
-  --ct-heading: #e2e4e8;
-  --ct-heading-sub: #dcdfe4;
-  --ct-strong: #e4e4e4;
-  --ct-muted: #8b949e;
-  --ct-meta: #8b949e;
-  --ct-meta-light: #6e7681;
-  --ct-border: #2a2f38;
-  --ct-border-table: #30363d;
-  --ct-border-table-head: #3d444d;
-  --ct-border-table-row: #2a2f38;
-  --ct-bg-table-head: #21252d;
-  --ct-bg-table-hover: #21252d;
-  --ct-bg-blockquote: #181a22;
-  --ct-border-blockquote: #5a8cc8;
-  --ct-accent: #5a8cc8;
-  --ct-inline-code-bg: #262a33;
-  --ct-inline-code-color: #e06c75;
-  --ct-card-border: #2a2f38;
-  --ct-card-hover-border: #444d56;
-  --ct-card-title: #e0e0e0;
-  --ct-card-text: #8b949e;
-  --ct-cat-header-bg: #1c2028;
-  --ct-cat-header-border: #2a2f38;
-  --ct-cat-item-text: #b0b6bf;
-  --ct-cat-item-hover-bg: #1c2028;
-  --ct-tag-bg: #1e2a3a;
-  --ct-tag-color: #8ab4db;
-  --ct-tag-hover-bg: #253548;
-  --ct-tag-hover-color: #a5cce8;
-  --ct-tag-hover-border: #34506e;
-  --ct-tag-muted: #5a7d9e;
-  --ct-archive-link: #c0c5cc;
-  --ct-archive-day: #8b949e;
-  --ct-archive-month: #6e7681;
-  --ct-archive-hover-bg: #1c2028;
+  --ct-text: #d1cfc5;
+  --ct-heading: #e8e6dc;
+  --ct-heading-sub: #e3ddd3;
+  --ct-strong: #e8e6dc;
+  --ct-muted: #87867f;
+  --ct-meta: #87867f;
+  --ct-meta-light: #5e5d59;
+  --ct-border: #2e2a25;
+  --ct-border-table: #2e2a25;
+  --ct-border-table-head: #3a3530;
+  --ct-border-table-row: #2e2a25;
+  --ct-bg-table-head: #231f1b;
+  --ct-bg-table-hover: #231f1b;
+  --ct-bg-blockquote: #1e1b18;
+  --ct-border-blockquote: #e0926b;
+  --ct-accent: #e0926b;
+  --ct-inline-code-bg: #2a2520;
+  --ct-inline-code-color: #e0926b;
+  --ct-card-border: #2e2a25;
+  --ct-card-hover-border: #4a4035;
+  --ct-card-title: #e8e6dc;
+  --ct-card-text: #87867f;
+  --ct-cat-header-bg: #231f1b;
+  --ct-cat-header-border: #2e2a25;
+  --ct-cat-item-text: #b0aea5;
+  --ct-cat-item-hover-bg: #231f1b;
+  --ct-tag-bg: #2a2520;
+  --ct-tag-color: #b0aea5;
+  --ct-tag-hover-bg: #3a3530;
+  --ct-tag-hover-color: #e0926b;
+  --ct-tag-hover-border: #e0926b;
+  --ct-tag-muted: #5e5d59;
+  --ct-archive-link: #d1cfc5;
+  --ct-archive-day: #87867f;
+  --ct-archive-month: #5e5d59;
+  --ct-archive-hover-bg: #231f1b;
 }
 
 /* Explicit dark mode toggle */
@@ -124,6 +125,17 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   letter-spacing: -0.01em;
+  background-color: #faf9f5 !important;
+}
+
+html[data-mode="dark"] body {
+  background-color: #1a1815 !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-mode]) body {
+    background-color: #1a1815 !important;
+  }
 }
 
 /* ===== Hide avatar ===== */
@@ -134,9 +146,10 @@ body {
 /* ===== Post title ===== */
 h1.dynamic-title,
 #post-wrapper h1 {
+  font-family: 'Noto Serif KR', serif;
   font-size: 1.5rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   line-height: 1.4;
   margin-bottom: 0.3rem;
   color: var(--ct-heading);
@@ -432,8 +445,11 @@ html[data-mode="light"] {
 
 /* ===== Post metadata ===== */
 .post-meta {
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.75rem;
   color: var(--ct-meta);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 /* ===== Home page post list ===== */
@@ -441,13 +457,14 @@ html[data-mode="light"] {
   .card-wrapper {
     margin-bottom: 0.8rem;
     border: 1px solid var(--ct-card-border);
-    border-radius: 10px;
+    border-radius: 8px;
     overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 
     &:hover {
       transform: translateY(-3px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       border-color: var(--ct-card-hover-border);
     }
 
@@ -486,6 +503,8 @@ html[data-mode="light"] {
 
 /* ===== Sidebar ===== */
 #sidebar {
+  background-color: #f0eee6 !important;
+
   .site-title {
     font-size: 1rem;
     font-weight: 700;
@@ -495,6 +514,28 @@ html[data-mode="light"] {
   .site-subtitle {
     font-size: 0.72rem;
     opacity: 0.8;
+  }
+
+  .nav-link.active {
+    color: #d97757 !important;
+  }
+}
+
+html[data-mode="dark"] #sidebar {
+  background-color: #1e1b18 !important;
+
+  .nav-link.active {
+    color: #e0926b !important;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-mode]) #sidebar {
+    background-color: #1e1b18 !important;
+
+    .nav-link.active {
+      color: #e0926b !important;
+    }
   }
 }
 
@@ -520,7 +561,10 @@ html[data-mode="light"] {
 .post-tag {
   font-size: 0.68rem !important;
   padding: 0.18rem 0.5rem !important;
-  border-radius: 12px !important;
+  border-radius: 0 !important;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 /* ===== Footer ===== */
@@ -605,10 +649,12 @@ footer {
   font-family: 'Spoqa Han Sans Neo', sans-serif;
 
   a.tag {
-    font-family: 'Spoqa Han Sans Neo', sans-serif !important;
+    font-family: 'JetBrains Mono', monospace !important;
     font-weight: 500;
     font-size: 0.72rem;
-    border-radius: 14px;
+    border-radius: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
     padding: 0.2em 0.6em;
     background-color: var(--ct-tag-bg);
     color: var(--ct-tag-color);
