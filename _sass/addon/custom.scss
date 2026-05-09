@@ -503,8 +503,6 @@ html[data-mode="light"] {
 
 /* ===== Sidebar ===== */
 #sidebar {
-  background-color: #f0eee6 !important;
-
   .site-title {
     font-size: 1rem;
     font-weight: 700;
@@ -514,28 +512,6 @@ html[data-mode="light"] {
   .site-subtitle {
     font-size: 0.72rem;
     opacity: 0.8;
-  }
-
-  .nav-link.active {
-    color: #d97757 !important;
-  }
-}
-
-html[data-mode="dark"] #sidebar {
-  background-color: #1e1b18 !important;
-
-  .nav-link.active {
-    color: #e0926b !important;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  html:not([data-mode]) #sidebar {
-    background-color: #1e1b18 !important;
-
-    .nav-link.active {
-      color: #e0926b !important;
-    }
   }
 }
 
