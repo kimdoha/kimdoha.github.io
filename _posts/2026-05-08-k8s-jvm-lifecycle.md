@@ -205,7 +205,7 @@ Readiness Probe가 있을 때:
 |---|---|---|---|
 | **Startup** | Liveness/Readiness 비활성화 유지 | JVM 느린 시작 수용 | 불필요 |
 | **Liveness** | 컨테이너 **재시작** | 좀비 Pod 감지 (+ ExitOnOOM 병행) | **넣지 않는다** |
-| **Readiness** | Endpoint에서 **제거** (재시작 아님) | 일시적 장애 시 트래픽 우회 | **넣는다** (DB, 캐시) |
+| **Readiness** | Endpoint에서 **제거** (재시작 아님) | 일시적 장애 시 트래픽 우회 | 필요 시 포함 (DB, 캐시) |
 
 ```yaml
 # Spring Boot Actuator 연동 예시
@@ -226,13 +226,13 @@ livenessProbe:
 
 readinessProbe:
   httpGet:
-    path: /actuator/health/readiness   # DB, 캐시 등 외부 의존성 포함
+    path: /actuator/health/readiness   # 필요 시 DB, 캐시 등 외부 의존성 포함
     port: 8080
   periodSeconds: 5
   failureThreshold: 3
 ```
 
-> **근거**: Kubernetes 공식 문서 — *"Startup Probe가 성공할 때까지 Liveness, Readiness Probe는 비활성화된다."* *"Readiness Probe 실패 시 Endpoint Controller가 해당 Pod의 IP를 모든 Service의 Endpoint에서 제거한다."* Spring Blog — *"Spring Boot 2.3+에서 `/actuator/health/liveness`(가벼운 내부 상태), `/actuator/health/readiness`(외부 의존성 포함) 엔드포인트를 분리 제공한다."* ([Kubernetes - Configure Probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/), [Spring.io - Liveness and Readiness Probes](https://spring.io/blog/2020/03/25/liveness-and-readiness-probes-with-spring-boot/))
+> **근거**: Kubernetes 공식 문서 — *"Startup Probe가 성공할 때까지 Liveness, Readiness Probe는 비활성화된다."* *"Readiness Probe 실패 시 Endpoint Controller가 해당 Pod의 IP를 모든 Service의 Endpoint에서 제거한다."* Spring Boot 문서는 liveness에는 외부 의존성을 넣지 말고, readiness에는 서비스가 트래픽을 받을 수 있는지 판단하는 데 필요한 의존성을 신중히 포함하라고 설명한다. ([Kubernetes - Configure Probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/), [Spring Boot - Kubernetes Probes](https://docs.spring.io/spring-boot/reference/actuator/endpoints.html#actuator.endpoints.kubernetes-probes))
 
 ---
 
@@ -340,4 +340,3 @@ HPA(Horizontal Pod Autoscaler)는 메트릭 기반으로 Pod 수를 자동 조�
 3. **CRaC (Coordinated Restore at Checkpoint)**: 워밍업된 JVM 스냅샷을 저장/복원하여 시작 시간을 수초로 단축.
 
 > **근거**: BlaBlaCar Engineering — *"JIT 컴파일이 안 된 새 Pod는 CPU를 과도하게 소모하여 HPA가 추가 스케일 아웃을 유발한다."* Kubernetes HPA 문서 — *"cpuInitializationPeriod(기본 5분) 동안 unready Pod의 CPU 사용량을 무시하는 보호 메커니즘이 있다."* ([BlaBlaCar - Java and Kubernetes warmup](https://medium.com/blablacar/warm-up-the-relationship-between-java-and-kubernetes-7fc5741f9a23), [Kubernetes - HPA](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/))
-

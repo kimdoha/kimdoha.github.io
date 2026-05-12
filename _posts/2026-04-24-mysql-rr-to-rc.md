@@ -65,7 +65,7 @@ Read View 차이는 사실 실무에서 크게 문제되지 않는다. 상품 �
 
 **진짜 중요한 차이는 Gap Lock이다.**
 
-RR에서 범위 조건으로 데이터를 잠그면, 기존 row뿐 아니라 **범위 사이의 빈 공간까지 lock**을 건다.
+RR에서 범위 조건을 locking read나 UPDATE/DELETE로 스캔하면, 기존 row뿐 아니라 **범위 사이의 빈 공간까지 lock**이 걸릴 수 있다. 실제 잠금 범위는 사용하는 인덱스와 실행 계획에 따라 달라진다.
 
 ```sql
 -- RR에서 이 쿼리를 실행하면
@@ -75,11 +75,11 @@ SELECT *
  WHERE mall_no = ?
    FOR UPDATE;
 
--- mall_no 범위 전체에 gap lock
+-- mall_no 조건을 타는 인덱스 범위에 next-key lock
 -- → 해당 몰에 새 상품 INSERT 불가 (BLOCKED)
 ```
 
-RC에서는 gap lock이 걸리지 않는다. 기존 row만 잠근다.
+RC에서는 일반적인 검색/인덱스 스캔에서 gap lock을 사용하지 않고 기존 row에 대한 record lock 위주로 동작한다. 다만 외래키 제약 검사나 중복키 검사에서는 gap lock이 사용될 수 있다.
 
 ---
 
@@ -98,7 +98,7 @@ RC에서는 gap lock이 걸리지 않는다. 기존 row만 잠근다.
 만약 RR이었다면:
 
 ```sql
--- TX-A: 해당 몰 범위 전체 gap lock
+-- TX-A: 해당 몰 조건을 타는 인덱스 범위에 next-key lock
 
 SELECT * FROM product
  WHERE mall_no = ?
