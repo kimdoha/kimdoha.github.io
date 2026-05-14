@@ -90,7 +90,7 @@ CPU/Memory 동작 차이와 OOM 문제를 이해하려면, K8S가 JVM 앱을 배
 │  ┌─── Control Plane ───┐     ┌──────── Worker Node ────────────────┐   │
 │  │                      │     │                                     │  │
 │  │  API Server          │     │  kubelet: Pod 관리, Probe 실행      │  │
-│  │  Scheduler           │     │  kube-proxy: Service → Pod 라우팅   │ │
+│  │  Scheduler           │     │  kube-proxy: Service → Pod 라우팅   │  │
 │  │  Controller Manager  │     │  Container Runtime: 컨테이너 실행   │  │
 │  │  etcd                │     │                                     │  │
 │  └──────────────────────┘     │  ┌─Pod─┐  ┌─Pod─┐  ┌─Pod─┐        │    │
@@ -222,9 +222,9 @@ DB 장애 시 — Readiness Probe가 없을 때:
   ┌── Service (kube-proxy) ───────────────────────────────────┐
   │                                                           │
   │  트래픽 분배:                                             │
-  │    Pod A (정상)  ← 33%                                   │
-  │    Pod B (DB 연결 끊김) ← 33% → 관련 요청 실패 가능     │
-  │    Pod C (정상)  ← 33%                                   │
+  │    Pod A (정상)  ← 33%                                    │
+  │    Pod B (DB 연결 끊김) ← 33% → 관련 요청 실패 가능       │
+  │    Pod C (정상)  ← 33%                                    │
   │                                                           │
   │  결과: 일부 요청이 실패할 수 있음                         │
   └───────────────────────────────────────────────────────────┘
@@ -238,12 +238,12 @@ Readiness Probe가 있을 때:
   ┌── Service (kube-proxy) ───────────────────────────────────┐
   │                                                           │
   │  트래픽 분배:                                             │
-  │    Pod A (정상)  ← 50%                                   │
+  │    Pod A (정상)  ← 50%                                    │
   │    Pod B (제거됨, 트래픽 안 옴, 재시작도 안 함)           │
-  │    Pod C (정상)  ← 50%                                   │
+  │    Pod C (정상)  ← 50%                                    │
   │                                                           │
   │  결과: 준비된 Pod만 트래픽 수신                           │
-  │  DB 복구되면 → Readiness 성공 → 자동으로 Endpoint 복귀  │
+  │  DB 복구되면 → Readiness 성공 → 자동으로 Endpoint 복귀    │
   └───────────────────────────────────────────────────────────┘
 ```
 
@@ -310,17 +310,17 @@ Pod 삭제 시 다음이 **병렬로** 시작된다:
 │                                       │  │                                               │
 │  Endpoint에서 Pod 제거                │  │  terminationGracePeriodSeconds 카운트다운 시작│
 │          │                            │  │          │                                    │
-│          ▼                            │  │          ▼                                  │
+│          ▼                            │  │          ▼                                    │
 │  kube-proxy 규칙 업데이트 (수초 소요) │  │  preStop hook 실행 (예: sleep 10)             │
 │          │                            │  │          │                                    │
-│          ▼                            │  │          ▼                                  │
-│  새 요청이 이 Pod로 오지 않음         │  │  SIGTERM → JVM Shutdown Hook 실행            │
+│          ▼                            │  │          ▼                                    │
+│  새 요청이 이 Pod로 오지 않음         │  │  SIGTERM → JVM Shutdown Hook 실행             │
 │                                       │  │          │                                    │
-│                                       │  │          ▼                                   │
+│                                       │  │          ▼                                    │
 │                                       │  │  Spring: 새 요청 거부 + 진행 중 요청 완료     │
 │                                       │  │  @PreDestroy: 커넥션 풀 반환, 리소스 정리     │
 │                                       │  │          │                                    │
-│                                       │  │          ▼                                   │
+│                                       │  │          ▼                                    │
 │                                       │  │  JVM 정상 종료                                │
 │                                       │  │  (유예 초과 시 SIGKILL 강제 종료)             │
 └───────────────────────────────────────┘  └───────────────────────────────────────────────┘
@@ -408,12 +408,12 @@ Pod Resources 설정 구조:
 │  limit: 2     limit: 2     limit: 2     │
 │  usage: 3 ⚠   usage: 1     usage: 1     │
 │       │                                 │
-│       ▼                                │
+│       ▼                                 │
 │  CPU throttling 발생                    │
-│  → cgroup의 CFS 스케줄러가             │
+│  → cgroup의 CFS 스케줄러가              │
 │    할당 시간을 제한                     │
-│  → Pod는 살아있지만 느려짐             │
-│  → 해당 Pod의 응답 지연 가능           │
+│  → Pod는 살아있지만 느려짐              │
+│  → 해당 Pod의 응답 지연 가능            │
 │                                         │
 │  ✅ Pod 종료: 없음                      │
 └─────────────────────────────────────────┘
@@ -433,11 +433,11 @@ Pod Resources 설정 구조:
 │  limit: 8Gi   limit: 8Gi   limit: 8Gi   │
 │  usage: 9Gi ⚠  usage: 6Gi  usage: 6Gi   │
 │       │                                 │
-│       ▼                                │
+│       ▼                                 │
 │  cgroup 메모리 한도 초과 감지           │
-│  → Linux OOM Killer 발동               │
-│  → SIGKILL (signal 9) 전송             │
-│  → 컨테이너 종료 (exit code 137)       │
+│  → Linux OOM Killer 발동                │
+│  → SIGKILL (signal 9) 전송              │
+│  → 컨테이너 종료 (exit code 137)        │
 │                                         │
 │  💀 Pod 종료: OOMKilled                 │
 └─────────────────────────────────────────┘
@@ -453,7 +453,7 @@ Pod Resources 설정 구조:
 ┌──────────────────────────────────────────────────────────┐
 │                   리소스 설정 전략                       │
 │                                                          │
-│  CPU:  requests ≪ limits                                │
+│  CPU:  requests ≪ limits                                 │
 │        ┌──────────────────────────────────────┐          │
 │        │ requests: 0.5    limits: 4           │          │
 │        │ ├─────┤          ├──────────────────┤ │         │
@@ -461,8 +461,8 @@ Pod Resources 설정 구조:
 │        └──────────────────────────────────────┘          │
 │        이유: 배포 시점에 CPU를 많이 사용하므로           │
 │              limits는 충분히, requests는 적게.           │
-│              requests=limits로 높게 잡으면 → 리소스 낭비│
-│              requests=limits로 낮게 잡으면 → 배포 지연  │
+│              requests=limits로 높게 잡으면 → 리소스 낭비 │
+│              requests=limits로 낮게 잡으면 → 배포 지연   │
 │                                                          │
 │  Memory: requests = limits (동일하게)                    │
 │        ┌──────────────────────────────────────┐          │
@@ -472,7 +472,7 @@ Pod Resources 설정 구조:
 │        └──────────────────────────────────────┘          │
 │        이유: requests < limits로 잡으면                  │
 │              실사용량이 requests를 넘을 때               │
-│              노드 OOM → 연쇄 축출 위험                  │
+│              노드 OOM → 연쇄 축출 위험                   │
 └──────────────────────────────────────────────────────────┘
 ```
 
