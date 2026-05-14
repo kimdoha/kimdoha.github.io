@@ -7,7 +7,7 @@ tags: [kubernetes, jvm, oom, pod-resources, memory, cpu-throttling, probe, grace
 
 > **TL;DR**: K8S에서 JVM 앱을 운영할 때 CPU limit 초과와 Memory limit 초과는 커널의 처리 방식이 다르다. CPU limit 초과는 CFS throttling으로 제한되고, memory limit 초과는 커널 OOM Killer가 SIGKILL을 전송해 프로세스를 강제 종료할 수 있다. JVM OOM과 Pod OOM은 감지 주체, 증상, 대응 방법이 모두 다르다.
 
-<pre>
+```text
 ┌─────────────────────────────────────────────────────────┐
 │             Pod가 리소스 limit을 초과하면?              │
 ├────────────────────────────┬────────────────────────────┤
@@ -32,9 +32,9 @@ tags: [kubernetes, jvm, oom, pod-resources, memory, cpu-throttling, probe, grace
 ├────────────────────────────┴────────────────────────────┤
 │  CPU는 시분할 가능(compressible), Memory는 시분할 불가(incompressible)  │
 └─────────────────────────────────────────────────────────┘
-</pre>
+```
 
-<pre>
+```text
 ┌─────────────────────────────────────────────────────────┐
 │          Memory 초과 시, 누가 먼저 감지하느냐?          │
 ├────────────────────────────┬────────────────────────────┤
@@ -72,7 +72,7 @@ tags: [kubernetes, jvm, oom, pod-resources, memory, cpu-throttling, probe, grace
 │   └────────────────────┘   │   └────────────────────┘   │
 │                            │                            │
 └────────────────────────────┴────────────────────────────┘
-</pre>
+```
 
 > **근거**: Kubernetes 공식 문서는 CPU limit을 커널이 강제하는 hard limit으로 설명하고, CPU 사용량은 throttling으로 제한된다고 설명한다. Memory limit은 OOM kill로 강제되지만, 커널이 메모리 압박을 감지할 때 반응적으로 적용되므로 초과 즉시 항상 종료되는 것은 아니다. JVM OOM과 Pod OOM의 차이는 예외를 던지는 주체(JVM vs 커널)가 다르기 때문에 발생한다. ([Kubernetes Docs - Resource Management](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/), [HeapHero - OOMKilled vs Java OOM](https://blog.heaphero.io/oomkilled-vs-java-oom-kubernetes/))
 
@@ -84,7 +84,7 @@ CPU/Memory 동작 차이와 OOM 문제를 이해하려면, K8S가 JVM 앱을 배
 
 ### 클러스터 구조
 
-```
+```text
 ┌────────────────────────── Kubernetes Cluster ──────────────────────────┐
 │                                                                        │
 │  ┌─── Control Plane ───┐     ┌──────── Worker Node ────────────────┐  │
@@ -109,7 +109,7 @@ CPU/Memory 동작 차이와 OOM 문제를 이해하려면, K8S가 JVM 앱을 배
 
 ### JVM 앱의 라이프사이클
 
-```
+```text
 ① 배포 요청
    kubectl apply / CI-CD pipeline
          │
@@ -154,7 +154,7 @@ JVM 앱은 클래스 로딩과 Spring Context 초기화로 기동 시간이 수�
 
 Startup Probe가 성공할 때까지 Liveness/Readiness Probe는 **비활성화 상태**를 유지한다.
 
-```
+```text
 Startup Probe가 없을 때:
 
   Pod 시작 → Spring Context 초기화 중 (30초 소요)
@@ -185,7 +185,7 @@ Startup Probe가 있을 때:
 
 실패 시 kubelet이 컨테이너를 **재시작**한다. 프로세스가 살아있지만 정상 동작하지 않는 **좀비 상태**를 감지하는 것이 목적이다.
 
-```
+```text
 JVM OOM 후 좀비 상태 — Liveness Probe가 없을 때:
 
   Client ──요청──▶ Pod (좀비)
@@ -216,7 +216,7 @@ Liveness Probe가 있을 때:
 
 실패 시 Service의 Endpoint 목록에서 **제거**된다. 재시작이 아니라 **트래픽만 끊는다**. 일시적으로 요청을 처리할 수 없는 상황에서 다른 정상 Pod로 트래픽을 우회시키는 것이 목적이다.
 
-```
+```text
 DB 장애 시 — Readiness Probe가 없을 때:
 
   ┌── Service (kube-proxy) ──────────────────────────────────┐
@@ -249,7 +249,7 @@ Readiness Probe가 있을 때:
 
 **Liveness vs Readiness를 잘못 쓰면?**
 
-```
+```text
 잘못된 설정: Liveness Probe에 DB health check를 넣은 경우
 
   DB 일시적 장애 (30초간)
@@ -305,7 +305,7 @@ readinessProbe:
 
 Pod 삭제 시 다음이 **병렬로** 시작된다:
 
-```
+```text
 ┌─ Track A: 네트워크 ──────────────────┐  ┌─ Track B: 컨테이너 종료 ─────────────────────┐
 │                                       │  │                                               │
 │  Endpoint에서 Pod 제거                │  │  terminationGracePeriodSeconds 카운트다운 시작 │
@@ -328,7 +328,7 @@ Pod 삭제 시 다음이 **병렬로** 시작된다:
 
 **Race Condition**: Track A(Endpoint/라우팅 반영)보다 Track B(앱 종료)가 먼저 끝나면, 일부 경로에서 종료 중인 Pod로 요청이 갈 수 있다. `preStop: sleep 10` 같은 지연은 이 경합 윈도우를 축소하는 완화책이며, 실제 값은 Ingress/LB/Service 전파 지연과 앱 종료 시간을 기준으로 산정해야 한다.
 
-```
+```text
 타이밍 공식:
   terminationGracePeriodSeconds >= preStop(10s) + Spring shutdown(25s) + 여유(5s) = 40s 이상
   기본값 30초가 부족할 수 있는 이유: preStop(10s) + Spring shutdown(25s) + 여유(5s) = 40s > 30s → 유예 시간 초과 시 SIGKILL 가능
@@ -338,7 +338,7 @@ Pod 삭제 시 다음이 **병렬로** 시작된다:
 
 ### 모니터링 — JVM Metrics
 
-```
+```text
 Spring Boot App
   └─ Actuator + Micrometer → /actuator/prometheus 엔드포인트
                                        │
@@ -362,7 +362,7 @@ JVM 앱에서 필수로 관찰해야 하는 메트릭:
 
 HPA(Horizontal Pod Autoscaler)는 메트릭 기반으로 Pod 수를 자동 조절한다. 그런데 JVM 앱에서는 **Cold Start 문제**가 있다.
 
-```
+```text
 트래픽 스파이크
   → HPA가 새 Pod 생성
     → 새 Pod의 JVM은 JIT 미컴파일 상태 → CPU 급등
@@ -386,7 +386,7 @@ HPA(Horizontal Pod Autoscaler)는 메트릭 기반으로 Pod 수를 자동 조�
 
 Kubernetes Pod에는 컨테이너별로 `requests`(기본 점유량)와 `limits`(최대 점유량)를 설정할 수 있다.
 
-```
+```text
 Pod Resources 설정 구조:
 
   resources:
@@ -400,7 +400,7 @@ Pod Resources 설정 구조:
 
 ### CPU limits 초과: 느려지지만 죽지 않는다
 
-```
+```text
 ┌─────────────────────────────────────────┐
 │              Node (8 cores)             │
 │                                         │
@@ -425,7 +425,7 @@ Pod Resources 설정 구조:
 
 ### Memory limits 초과: OOMKilled될 수 있다
 
-```
+```text
 ┌─────────────────────────────────────────┐
 │              Node (32Gi)                │
 │                                         │
@@ -449,7 +449,7 @@ Pod Resources 설정 구조:
 
 ### 그래서 설정 전략이 다르다
 
-```
+```text
 ┌──────────────────────────────────────────────────────────┐
 │                   리소스 설정 전략                         │
 │                                                          │
