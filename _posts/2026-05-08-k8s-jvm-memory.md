@@ -39,7 +39,7 @@ tags: [kubernetes, jvm, oom, pod-resources, memory, cpu-throttling, probe, grace
 │          Memory 초과 시, 누가 먼저 감지하느냐?          │
 ├────────────────────────────┬────────────────────────────┤
 │                            │                            │
-│     JVM 내부 영역 초과     │  JVM 전체 합 > Pod limit   │
+│     JVM 내부 영역 초과     │ cgroup memory > limit      │
 │    (Heap, Metaspace 등)    │                            │
 │                            │                            │
 │             │              │             │              │
@@ -54,27 +54,27 @@ tags: [kubernetes, jvm, oom, pod-resources, memory, cpu-throttling, probe, grace
 │             │              │             │              │
 │             v              │             v              │
 │   ┌────────────────────┐   │   ┌────────────────────┐   │
-│   │  힙덤프 생성: O    │   │   │  힙덤프 생성: X    │   │
-│   │  로그 기록:  O     │   │   │  로그 기록:  X     │   │
-│   │  프로세스: 존속    │   │   │  프로세스: 강제종료│   │
-│   │  (좀비 위험)       │   │   │  (JVM 덤프 불가)   │   │
+│   │  힙덤프: 옵션 설정 │   │   │  힙덤프 생성: X    │   │
+│   │  로그 기록: 가능   │   │   │  JVM 로그: X       │   │
+│   │  프로세스: 계속    │   │   │  프로세스: 강제종료│   │
+│   │  살 수도 있음      │   │   │  (JVM 덤프 불가)   │   │
 │   └─────────┬──────────┘   │   └─────────┬──────────┘   │
 │             │              │             │              │
 │             v              │             v              │
 │   ┌────────────────────┐   │   ┌────────────────────┐   │
 │   │  대응 방법         │   │   │  대응 방법         │   │
 │   │                    │   │   │                    │   │
-│   │  - 힙덤프 분석     │   │   │  - JVM 옵션 조정   │   │
-│   │  - 메모리 누수     │   │   │  - Pod Memory >    │   │
-│   │    추적            │   │   │    JVM 총량 보장   │   │
-│   │  - ExitOnOOM       │   │   │  - AlwaysPreTouch  │   │
-│   │    (좀비 방지)     │   │   │    (RSS 예측)      │   │
+│   │  - HeapDumpOnOOM   │   │   │  - JVM 옵션 조정   │   │
+│   │  - 메모리 누수     │   │   │  - 컨테이너 전체   │   │
+│   │    추적            │   │   │    메모리 산정     │   │
+│   │  - ExitOnOOM       │   │   │  - limit에 여유    │   │
+│   │    (좀비 방지)     │   │   │    확보            │   │
 │   └────────────────────┘   │   └────────────────────┘   │
 │                            │                            │
 └────────────────────────────┴────────────────────────────┘
 ```
 
-> **근거**: Kubernetes 공식 문서는 CPU limit을 커널이 강제하는 hard limit으로 설명하고, CPU 사용량은 throttling으로 제한된다고 설명한다. Memory limit은 OOM kill로 강제되지만, 커널이 메모리 압박을 감지할 때 반응적으로 적용되므로 초과 즉시 항상 종료되는 것은 아니다. JVM OOM과 Pod OOM의 차이는 예외를 던지는 주체(JVM vs 커널)가 다르기 때문에 발생한다. ([Kubernetes Docs - Resource Management](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/), [HeapHero - OOMKilled vs Java OOM](https://blog.heaphero.io/oomkilled-vs-java-oom-kubernetes/))
+> **근거**: Kubernetes 공식 문서는 CPU limit을 커널이 강제하는 hard limit으로 설명하고, CPU 사용량은 throttling으로 제한된다고 설명한다. Memory limit은 OOM kill로 강제되지만, 커널이 메모리 압박을 감지할 때 반응적으로 적용되므로 초과 즉시 항상 종료되는 것은 아니다. JVM OOM과 Pod OOM의 차이는 예외를 던지는 주체(JVM vs 커널)가 다르기 때문에 발생한다. 여기서 Pod OOM의 기준은 JVM heap만이 아니라 컨테이너 cgroup의 전체 메모리 사용량이다. JVM OOM에서 힙덤프를 남기려면 `-XX:+HeapDumpOnOutOfMemoryError` 같은 옵션이 필요하고, Pod OOM은 JVM이 아니라 커널이 프로세스를 죽이므로 JVM 힙덤프나 shutdown hook을 기대하기 어렵다. ([Kubernetes Docs - Resource Management](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/), [Oracle Java Options](https://docs.oracle.com/en/java/javase/21/docs/specs/man/java.html#advanced-runtime-options-for-java), [HeapHero - OOMKilled vs Java OOM](https://blog.heaphero.io/oomkilled-vs-java-oom-kubernetes/))
 
 ---
 
@@ -192,7 +192,7 @@ JVM OOM 후 좀비 상태 — Liveness Probe가 없을 때:
                     │
                     ├── 프로세스: 살아있음 (PID 존재)
                     ├── Heap: 꽉 참 (OutOfMemoryError 발생)
-                    ├── 새 요청마다: 500 Internal Server Error
+                    ├── 새 요청: 실패하거나 지연될 수 있음
                     │
                     └── Kubernetes: Pod 상태 Running → "정상이니 놔두자"
                         → 계속 에러를 반환하는 Pod가 남을 수 있음
@@ -206,7 +206,7 @@ Liveness Probe가 있을 때:
                     │   → 이것이 ExitOnOutOfMemoryError가 필요한 이유
                     │     (JVM OOM 시 프로세스를 종료시키면 kubelet이 재시작 가능)
                     │
-                    ├── ExitOnOutOfMemoryError로 JVM 종료 → 컨테이너 종료
+                    ├── ExitOnOutOfMemoryError 설정 시 JVM 종료 → 컨테이너 종료
                     │
                     ▼
                 kubelet: restartPolicy에 따라 컨테이너 재시작
@@ -247,6 +247,8 @@ Readiness Probe가 있을 때:
   └───────────────────────────────────────────────────────────┘
 ```
 
+단, Readiness에 외부 의존성을 넣을지는 신중히 판단해야 한다. 모든 Pod가 같은 DB나 캐시에 의존하는 구조에서 해당 의존성이 장애 나면, 모든 Pod가 동시에 Unready가 되어 Service 관점에서는 가용 엔드포인트가 사라질 수 있다. Spring Boot도 liveness에는 외부 시스템 health check를 넣지 말라고 권고하고, readiness의 외부 의존성 포함 여부는 애플리케이션의 장애 처리 전략에 맞게 결정하라고 설명한다.
+
 **Liveness vs Readiness를 잘못 쓰면?**
 
 ```text
@@ -272,7 +274,7 @@ Readiness Probe가 있을 때:
 |---|---|---|---|
 | **Startup** | Liveness/Readiness 비활성화 유지 | JVM 느린 시작 수용 | 불필요 |
 | **Liveness** | 컨테이너 **재시작** | 좀비 Pod 감지 (+ ExitOnOOM 병행) | **넣지 않는다** |
-| **Readiness** | Endpoint에서 **제거** (재시작 아님) | 일시적 장애 시 트래픽 우회 | 필요 시 포함 (DB, 캐시) |
+| **Readiness** | Endpoint에서 **제거** (재시작 아님) | 일시적 장애 시 트래픽 우회 | 필요 시 포함하되, 공유 의존성은 신중히 판단 |
 
 ```yaml
 # Spring Boot Actuator 연동 예시
@@ -318,6 +320,7 @@ Pod 삭제 시 다음이 **병렬로** 시작된다:
 │                                       │  │          │                                    │
 │                                       │  │          ▼                                    │
 │                                       │  │  Spring: 새 요청 거부 + 진행 중 요청 완료     │
+│                                       │  │  (graceful shutdown 설정 시)                  │
 │                                       │  │  @PreDestroy: 커넥션 풀 반환, 리소스 정리     │
 │                                       │  │          │                                    │
 │                                       │  │          ▼                                    │
@@ -327,6 +330,8 @@ Pod 삭제 시 다음이 **병렬로** 시작된다:
 ```
 
 **Race Condition**: Track A(Endpoint/라우팅 반영)보다 Track B(앱 종료)가 먼저 끝나면, 일부 경로에서 종료 중인 Pod로 요청이 갈 수 있다. `preStop: sleep 10` 같은 지연은 이 경합 윈도우를 축소하는 완화책이며, 실제 값은 Ingress/LB/Service 전파 지연과 앱 종료 시간을 기준으로 산정해야 한다.
+
+Spring Boot에서 진행 중 요청을 기다리는 종료를 기대하려면 애플리케이션 쪽 graceful shutdown도 켜야 한다. 예를 들어 `server.shutdown=graceful`과 `spring.lifecycle.timeout-per-shutdown-phase`를 termination grace period 안에 들어오도록 맞춘다. SIGTERM을 받는다고 모든 Spring Boot 애플리케이션이 자동으로 진행 중 요청을 끝까지 기다리는 것은 아니다.
 
 ```text
 타이밍 공식:
@@ -366,9 +371,9 @@ HPA(Horizontal Pod Autoscaler)는 메트릭 기반으로 Pod 수를 자동 조�
 트래픽 스파이크
   → HPA가 새 Pod 생성
     → 새 Pod의 JVM은 JIT 미컴파일 상태 → CPU 급등
-      → HPA가 이를 "부하 증가"로 오인 → 추가 Pod 생성
+      → readiness가 너무 빨리 열리면 HPA가 이를 부하로 볼 수 있음
         → 새 Pod도 차가운 상태 → CPU 급등
-          → 과도한 스케일 아웃 가능
+          → 조건에 따라 과도한 스케일 아웃 가능
 ```
 
 **원인**: JVM은 JIT(Just-In-Time) 컴파일러를 사용한다. 시작 직후에는 인터프리터 모드로 실행하다가 자주 호출되는 코드를 점진적으로 네이티브 코드로 컴파일한다. 이 워밍업 구간에서 인터프리터 실행과 JIT 컴파일이 동시에 발생하면서 CPU 사용량이 급증한다.
@@ -378,7 +383,7 @@ HPA(Horizontal Pod Autoscaler)는 메트릭 기반으로 Pod 수를 자동 조�
 2. **HPA 튜닝**: readiness 지연, CPU initialization period, scale-up 정책을 서비스 warmup 시간에 맞춘다.
 3. **CRaC (Coordinated Restore at Checkpoint)**: 워밍업된 JVM 스냅샷을 저장/복원하여 시작 시간을 수초로 단축.
 
-> **근거**: JVM warmup 중 CPU 사용량이 높아질 수 있다는 점은 JVM 애플리케이션 운영에서 알려진 이슈다. Kubernetes HPA에는 readiness 지연과 CPU initialization period를 통해 아직 준비되지 않은 Pod의 CPU를 보수적으로 다루는 보호 장치가 있다. ([Kubernetes - HPA](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/), [BlaBlaCar - Java and Kubernetes warmup](https://medium.com/blablacar/warm-up-the-relationship-between-java-and-kubernetes-7fc5741f9a23))
+> **근거**: JVM warmup 중 CPU 사용량이 높아질 수 있다는 점은 JVM 애플리케이션 운영에서 알려진 이슈다. Kubernetes HPA에는 `--horizontal-pod-autoscaler-initial-readiness-delay`(기본 30초)와 `--horizontal-pod-autoscaler-cpu-initialization-period`(기본 5분)를 통해 아직 준비되지 않은 Pod의 CPU를 보수적으로 다루는 보호 장치가 있다. 다만 Readiness가 실제 warmup보다 빨리 성공하거나 클러스터 설정이 애플리케이션 warmup 시간과 맞지 않으면 초기 CPU 스파이크가 스케일링 판단에 영향을 줄 수 있다. ([Kubernetes - HPA](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/), [BlaBlaCar - Java and Kubernetes warmup](https://medium.com/blablacar/warm-up-the-relationship-between-java-and-kubernetes-7fc5741f9a23))
 
 ---
 
@@ -409,17 +414,17 @@ Pod Resources 설정 구조:
 │  usage: 3 ⚠   usage: 1     usage: 1     │
 │       │                                 │
 │       ▼                                 │
-│  CPU throttling 발생                    │
-│  → cgroup의 CFS 스케줄러가              │
-│    할당 시간을 제한                     │
-│  → Pod는 살아있지만 느려짐              │
-│  → 해당 Pod의 응답 지연 가능            │
+│  CPU throttling 발생                     │
+│  → cgroup의 CFS 스케줄러가                 │
+│    할당 시간을 제한                         │
+│  → Pod는 살아있지만 느려짐                   │
+│  → 해당 Pod의 응답 지연 가능                 │
 │                                         │
-│  ✅ Pod 종료: 없음                      │
+│  ✅ Pod 종료: 없음                        │
 └─────────────────────────────────────────┘
 ```
 
-**왜 안 죽는가?** CPU는 **압축 가능한(compressible) 자원**이다. CFS(Completely Fair Scheduler)가 cgroup 단위로 CPU 시간을 시분할(time-slicing) 배분하며, 할당량(`cpu.cfs_quota_us`)을 초과하면 다음 주기(`cpu.cfs_period_us`)까지 대기(throttling)시킨다. CPU 시간이 부족할 뿐 프로세스를 종료할 이유가 없다.
+**왜 안 죽는가?** CPU는 **압축 가능한(compressible) 자원**이다. CFS(Completely Fair Scheduler)가 cgroup 단위로 CPU 시간을 시분할(time-slicing) 배분하며, 할당량을 초과하면 다음 주기까지 대기(throttling)시킨다. cgroup v1에서는 주로 `cpu.cfs_quota_us` / `cpu.cfs_period_us`, cgroup v2에서는 `cpu.max`로 이 한도를 표현한다. CPU 시간이 부족할 뿐 프로세스를 종료할 이유가 없다.
 
 > **근거**: Kubernetes 공식 문서 — *"CPU는 compressible resource로, Pod는 CPU 제한 초과 시 throttle된다."* Sysdig 기술 블로그 — *"CPU가 이슈인 경우, 컨테이너는 크래시하지 않고 느리게 응답한다."* ([Kubernetes Docs](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/), [Sysdig Blog](https://www.sysdig.com/blog/troubleshoot-kubernetes-oom))
 
@@ -434,12 +439,12 @@ Pod Resources 설정 구조:
 │  usage: 9Gi ⚠  usage: 6Gi  usage: 6Gi   │
 │       │                                 │
 │       ▼                                 │
-│  cgroup 메모리 한도 초과 감지           │
-│  → Linux OOM Killer 발동                │
-│  → SIGKILL (signal 9) 전송              │
-│  → 컨테이너 종료 (exit code 137)        │
+│  cgroup 메모리 한도 초과 감지                │
+│  → Linux OOM Killer 발동                 │
+│  → SIGKILL (signal 9) 전송               │
+│  → 컨테이너 종료 (exit code 137)           │
 │                                         │
-│  💀 Pod 종료: OOMKilled                 │
+│  💀 Pod 종료: OOMKilled                  │
 └─────────────────────────────────────────┘
 ```
 
@@ -451,29 +456,52 @@ Pod Resources 설정 구조:
 
 ```text
 ┌──────────────────────────────────────────────────────────┐
-│                   리소스 설정 전략                       │
+│                   리소스 설정 전략                           │
 │                                                          │
-│  CPU:  requests ≪ limits                                 │
+│  CPU:  request는 실측 기반, limit은 신중히                │
 │        ┌──────────────────────────────────────┐          │
-│        │ requests: 0.5    limits: 4           │          │
-│        │ ├─────┤          ├──────────────────┤ │         │
-│        │ 평상시 사용량     배포/스파이크 대비   │        │
+│        │ request: 평상시 필요량                │          │
+│        │ limit: 지연 민감도와 노드 정책에 따라  │          │
 │        └──────────────────────────────────────┘          │
-│        이유: 배포 시점에 CPU를 많이 사용하므로           │
-│              limits는 충분히, requests는 적게.           │
-│              requests=limits로 높게 잡으면 → 리소스 낭비 │
-│              requests=limits로 낮게 잡으면 → 배포 지연   │
+│        이유: CPU limit은 죽이지는 않지만 throttling으로  │
+│              latency를 악화시킬 수 있음                  │
 │                                                          │
-│  Memory: requests = limits (동일하게)                    │
+│  Memory: limit과 JVM 총량을 반드시 맞춘다                 │
 │        ┌──────────────────────────────────────┐          │
-│        │ requests = limits = 2Gi              │          │
-│        │ ├──────────────────┤                 │          │
-│        │ JVM 내부 여유를 계산해 고정             │       │
+│        │ heap + metaspace + direct + stack +  │          │
+│        │ code cache + native + page cache ... │          │
 │        └──────────────────────────────────────┘          │
-│        이유: requests < limits로 잡으면                  │
-│              실사용량이 requests를 넘을 때               │
-│              노드 OOM → 연쇄 축출 위험                   │
+│        이유: memory limit 초과는 OOMKilled로 이어질 수 있음│
 └──────────────────────────────────────────────────────────┘
 ```
 
-> **근거**: Kubernetes QoS 분류 — CPU와 memory 모두 requests=limits로 설정하면 `Guaranteed` QoS를 받아 노드 압박 상황에서 축출 우선순위가 가장 낮다. requests < limits이면 `Burstable`로 분류되고, 사용량이 requests를 초과한 Pod는 노드 리소스 부족 시 축출 후보가 될 수 있다. ([Kubernetes QoS](https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/), [Node-pressure Eviction](https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/))
+CPU와 Memory는 운영 전략이 다르다.
+
+- **CPU request**는 스케줄링 기준이므로 평상시 필요량과 목표 bin packing을 기준으로 잡는다.
+- **CPU limit**은 throttling을 만들 수 있으므로 latency-sensitive 서비스에서는 크게 잡거나, 클러스터 정책이 허용한다면 두지 않는 전략도 검토한다.
+- **Memory request**는 노드 배치와 eviction 우선순위에 영향을 준다.
+- **Memory limit**은 컨테이너의 실제 상한이므로 JVM의 heap만이 아니라 metaspace, thread stack, direct buffer, code cache, native memory, mmap, page cache, tmpfs `emptyDir`까지 고려해 잡아야 한다.
+
+QoS를 `Guaranteed`로 받고 싶다면 조건이 더 엄격하다. 모든 컨테이너에 CPU와 Memory의 request/limit이 모두 설정되어야 하고, 각 리소스별 request와 limit이 같아야 한다. 즉 Memory만 `requests=limits`로 맞추고 CPU는 `requests < limits`로 두면 `Guaranteed`가 아니라 `Burstable`이다.
+
+```yaml
+# Guaranteed QoS 예시
+resources:
+  requests:
+    cpu: "2"
+    memory: "2Gi"
+  limits:
+    cpu: "2"
+    memory: "2Gi"
+
+# Burstable QoS 예시
+resources:
+  requests:
+    cpu: "500m"
+    memory: "2Gi"
+  limits:
+    cpu: "2"
+    memory: "2Gi"
+```
+
+> **근거**: Kubernetes QoS 분류 — `Guaranteed` QoS는 모든 컨테이너의 CPU와 memory request/limit이 모두 존재하고, 각각 request와 limit이 같아야 한다. 이 조건을 만족하지 않고 하나 이상의 request/limit이 있으면 일반적으로 `Burstable`로 분류된다. Node pressure 상황에서는 `BestEffort`, `Burstable`, `Guaranteed` 순서로 축출 우선순위가 높다. ([Kubernetes QoS](https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/), [Node-pressure Eviction](https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/))
