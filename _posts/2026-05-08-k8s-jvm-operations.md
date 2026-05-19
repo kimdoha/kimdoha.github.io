@@ -43,6 +43,29 @@ Pod 삭제 시 다음이 **병렬로** 시작된다:
 
 **Race Condition**: Track A(Endpoint/라우팅 반영)보다 Track B(앱 종료)가 먼저 끝나면, 일부 경로에서 종료 중인 Pod로 요청이 갈 수 있다. `preStop: sleep 10` 같은 지연은 이 경합 윈도우를 축소하는 완화책이며, 실제 값은 Ingress/LB/Service 전파 지연과 앱 종료 시간을 기준으로 산정해야 한다.
 
+#### preStop: sleep 10은 왜 필요한가?
+
+```text
+preStop이 없을 때:
+
+  SIGTERM 수신 → Spring 종료 시작 → 3초 후 JVM 종료
+                                          ↑
+  그런데 kube-proxy는 아직 라우팅 규칙 업데이트 중 (5초 소요)
+  → 이미 죽은 Pod로 요청이 갈 수 있음
+
+preStop: sleep 10이 있을 때:
+
+  SIGTERM 수신 → preStop: sleep 10 (아무것도 안 하고 10초 대기)
+                      ↓
+                이 10초 동안 kube-proxy가 라우팅 규칙 업데이트 완료
+                → 새 요청이 이 Pod로 오지 않게 됨
+                      ↓
+                sleep 끝 → 그제서야 Spring 종료 시작
+                → 이미 트래픽이 끊긴 상태에서 안전하게 종료
+```
+
+kube-proxy가 Endpoint에서 Pod를 빼는 데 수초가 걸리는데, 앱이 그보다 먼저 죽으면 **종료 중인 Pod로 요청이 가는 Race Condition**이 생긴다. `preStop: sleep 10`은 앱 종료를 의도적으로 지연시켜서 그 경합 윈도우를 없애는 완화책이다.
+
 Spring Boot에서 진행 중 요청을 기다리는 종료를 기대하려면 애플리케이션 쪽 graceful shutdown도 켜야 한다. 예를 들어 `server.shutdown=graceful`과 `spring.lifecycle.timeout-per-shutdown-phase`를 termination grace period 안에 들어오도록 맞춘다. SIGTERM을 받는다고 모든 Spring Boot 애플리케이션이 자동으로 진행 중 요청을 끝까지 기다리는 것은 아니다.
 
 ```text
