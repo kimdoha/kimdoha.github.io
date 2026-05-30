@@ -53,7 +53,7 @@ Helm chart는 한 애플리케이션을 두 개의 Deployment로 렌더링한다
 | `{app}-main` | `canary=normal` | 안정 버전. 평상 시 전체 트래픽을 받는다 |
 | `{app}-sub` | `canary=canary` | 카나리 버전. 검증 중인 신버전 |
 
-Service 셀렉터는 두 Deployment의 Pod를 모두 endpoint로 묶는다. 별도 가중치 설정이 없는 구조라 트래픽은 endpoint 단위로 분배되며, 메인 4대와 카나리 1대 구성이면 신버전이 받는 트래픽이 장기 평균상 약 20%에 근접한다. 실제 비율은 kube-proxy 모드, connection reuse(HTTP/2·gRPC), session affinity, readiness 등에 따라 달라진다.
+Service 셀렉터는 두 Deployment의 Pod를 모두 endpoint로 묶는다. 별도 가중치 설정 없이 endpoint 단위로 트래픽이 흩어지므로, 메인 4대와 카나리 1대 구성에서는 신버전 트래픽이 장기적으로 약 20%에 근접한다. 실제 비율은 kube-proxy 모드, connection reuse(HTTP/2·gRPC), session affinity, readiness 같은 요인에 따라 달라진다.
 
 세밀한 가중치(1%, 5% 단위) 분배가 필요하다면 Argo Rollouts + Istio/NGINX 조합이 일반적이다. 이 글에서 다루는 구조는 그보다 단순한 모델이다.
 
@@ -93,7 +93,7 @@ canary:
 - `main`: 기존 버전(`normal`) × `replicas(4)` 유지
 - `sub`: 신버전(`canary`) × `canaryReplicas(1)` 신규 기동
 
-이 단계에서 신버전이 일부 트래픽을 받는다. 이상 신호 유무를 메트릭과 로그로 확인한 뒤 다음 상태를 결정한다.
+이 단계에서 신버전이 일부 트래픽을 받기 시작한다. 메트릭과 로그로 이상 신호가 있는지 확인한 뒤 다음 상태를 정한다.
 
 ### 3.2 finish — 카나리 승격
 
@@ -121,7 +121,7 @@ canary:
 - `main`: 기존 버전 유지
 - `sub`: 0대
 
-카나리 인스턴스만 제거하고 기존 버전 100%로 복귀한다. 결과적으로 CANARY 진입 직전 상태와 같다.
+카나리 인스턴스만 제거하고 기존 버전 100% 운영으로 돌린다. CANARY 진입 직전과 같은 상태다.
 
 ### 3.4 deploy_force — 카나리 단계 생략
 
@@ -137,7 +137,7 @@ canary:
 
 카나리 단계 없이 신버전을 전체에 즉시 배포한다. 트래픽 검증이 의미가 없는 변경(설정값, 로깅 레벨, 의존성 마이너 업데이트 등)이나 긴급 패치(취약점 대응, 장애 hotfix)에 사용한다.
 
-위 결과는 직전 상태가 `finish`인 정상 경로를 가정한다. 직전 상태가 `canary`였다면 sub deployment의 카나리 인스턴스가 정리되지 않고 잔존하는 현상이 관찰되었다. 자세한 내용은 **5. 운영 주의점** 에서 다룬다.
+위 결과는 직전 상태가 `finish`인 정상 경로를 가정한다. 직전 상태가 `canary`였다면 sub deployment의 카나리 인스턴스가 그대로 남는 현상을 운영 중 확인했다. 이 경로는 **5. 운영 주의점** 에서 다룬다.
 
 ---
 
@@ -169,7 +169,7 @@ canary:
 
 ## 5. 운영 주의점: CANARY 직후 DEPLOY_FORCE
 
-운영 중 다음 시퀀스에서 sub deployment의 카나리 인스턴스가 정리되지 않는 현상이 재현되었다.
+운영 중 다음 순서로 배포할 때 sub deployment의 카나리 인스턴스가 그대로 남는 현상을 확인했다.
 
 ```
 PR #1  state=canary       → sub 에 카나리 1대 기동
@@ -177,25 +177,25 @@ PR #2  state=deploy_force → 곧바로 강제 배포
 결과   sub 인스턴스가 제거되지 않고 잔존
 ```
 
-반면 다음 두 경로에서는 sub deployment가 정상적으로 정리되는 것을 확인했다.
+반면 다음 두 경로에서는 sub deployment가 정상적으로 정리된다.
 
 ```
 state=canary → state=finish    → sub 정리됨
 state=canary → state=rollback  → sub 정리됨
 ```
 
-sub deployment를 정리하는 책임은 실질적으로 `finish`와 `rollback` 두 상태에 있으며, `deploy_force`를 카나리 진행 중에 직접 거는 경로는 sub 정리 동작을 보장하지 않는다. 정확한 트리거가 chart template의 상태별 렌더링 차이인지 ArgoCD Application의 `prune` 설정 차이인지는 chart template 원문과 Application 정의를 함께 확인해야 단정할 수 있다.
+sub deployment를 정리하는 책임은 사실상 `finish`와 `rollback` 두 상태가 진다. `deploy_force`를 카나리 진행 중에 바로 거는 경로에서는 sub 정리 동작이 보장되지 않는다. 정확한 트리거가 chart template의 상태별 렌더링 차이인지 ArgoCD Application의 `prune` 설정 차이인지는 chart template 원문과 Application 정의를 같이 확인해야 단정할 수 있다.
 
 ### 안전한 진행 순서
 
-운영상 검증된 우회 절차는 다음과 같다.
+운영상 검증한 우회 절차는 두 단계다.
 
 ```
 ① state=rollback PR → 머지 → 카나리 인스턴스부터 정리
 ② state=deploy_force PR → 머지 → 강제 전체 배포
 ```
 
-규칙은 **CANARY 상태에서 다른 상태로 직접 전이하지 않고, 반드시 finish 또는 rollback을 거쳐 sub deployment를 정리한 뒤 다음 상태로 전이한다** 이다. PR 템플릿이나 운영 가이드에 명시해두면 재발을 막을 수 있다.
+**CANARY 상태에서는 다른 상태로 바로 전이하지 않는다. 반드시 finish 또는 rollback을 거쳐 sub deployment를 정리한 뒤 다음 상태로 넘어간다.** PR 템플릿이나 운영 가이드에 이 한 줄만 명시해두면 같은 사고가 다시 나지 않는다.
 
 ---
 
