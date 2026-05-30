@@ -6,7 +6,7 @@ tags: [kotlin, coroutine, exception-handling, coroutineexceptionhandler, withcon
 toc: true
 ---
 
-2편에서 구조화된 동시성과 Job 트리, 협조적 취소 전파까지 다뤘다. 3편에서는 실전에서 가장 자주 부딪히는 세 가지 — `launch`와 `async`의 예외 전파 차이, `CoroutineExceptionHandler`가 동작하는 위치, `withContext`로 Dispatcher를 전환할 때 Spring의 ThreadLocal 기반 트랜잭션이 사라지는 문제를 다룬다.
+2편에서 구조화된 동시성과 Job 트리를 통한 취소 전파를 다뤘다. 코루틴이 트리를 이루고, 실패가 전파되고, 취소가 협조적이라는 것까지 이해했다면 — 이제 실전에서 가장 많이 부딪히는 문제를 볼 차례다. 예외가 `launch`와 `async`에서 다르게 전파되는 규칙, `CoroutineExceptionHandler`의 동작 위치, 그리고 `withContext`로 Dispatcher를 전환할 때 Spring의 ThreadLocal 기반 트랜잭션이 유실되는 문제를 다룬다.
 
 > 이 글의 예제 코드는 Kotlin + Spring 기반이며, 핵심 동작에 집중하기 위해 일부 보일러플레이트는 생략했다.
 
@@ -106,7 +106,7 @@ suspend fun example() = supervisorScope {
 
 ### 마지막 안전망
 
-`CoroutineExceptionHandler`는 처리되지 않은 예외를 잡는 **최후의 안전망**이다. Java의 `Thread.uncaughtExceptionHandler`와 같은 역할을 한다.
+`CoroutineExceptionHandler`는 처리되지 않은 예외를 잡는 **최후의 안전망**이다. Java의 `Thread.uncaughtExceptionHandler`와 유사하다.
 
 ```kotlin
 val handler = CoroutineExceptionHandler { context, exception ->
@@ -223,7 +223,7 @@ val scope = CoroutineScope(
 
 ### runCatching과 CancellationException 주의
 
-`runCatching`은 모든 `Throwable`을 잡는다 — `CancellationException`까지도. 이것이 코루틴의 취소 메커니즘을 망친다.
+`runCatching`은 모든 `Throwable`을 잡는다 — `CancellationException`까지도. 이것은 코루틴의 취소 메커니즘을 방해할 수 있다.
 
 ```kotlin
 // ❌ 위험: CancellationException까지 삼킨다
@@ -250,7 +250,7 @@ scope.launch {
 }
 ```
 
-`runCatching`을 코루틴 안에서 쓸 때는 `CancellationException`이 잡히지 않도록 주의해야 한다. Kotlin 표준 라이브러리는 아직 이에 대한 공식 해결책이 없다. suspend 함수에서는 `try-catch`로 `CancellationException`을 명시적으로 재던지거나, `CancellationException`을 걸러내는 확장 함수를 만들어 쓰는 편이 안전하다.
+`runCatching`을 코루틴 안에서 사용할 때는 `CancellationException`이 잡히지 않도록 주의해야 한다. Kotlin 표준 라이브러리에서 아직 이에 대한 공식 해결책은 없으므로, suspend 함수에서는 `try-catch`로 `CancellationException`을 명시적으로 재던지거나, `CancellationException`을 걸러내는 확장 함수를 사용하는 것이 안전하다.
 
 ```kotlin
 // 코루틴 안전한 runCatching 확장
@@ -285,7 +285,7 @@ DB 삭제는 정상 수행됐고, `publishEvent()`도 호출됐지만 리스너�
 
 ### 실행 환경
 
-WebFlux는 Netty EventLoop 위에서 non-blocking으로 동작하지만, JOOQ/JPA를 통한 DB 작업은 blocking이다. 두 모델을 잇기 위해 DB 작업을 전용 스레드 풀(`dbDispatcher`)에서 실행하는 래퍼를 둔다.
+WebFlux는 Netty EventLoop 위에서 non-blocking으로 동작하지만, JOOQ/JPA를 통한 DB 작업은 blocking이다. 이 둘을 연결하기 위해 DB 작업을 전용 스레드 풀(`dbDispatcher`)에서 실행하는 래퍼를 사용한다.
 
 ```kotlin
 class CoroutineTransactionHandler(
@@ -437,7 +437,7 @@ withContext(Dispatchers.IO + MDCContext()) {
 
 `MDCContext`는 `ThreadContextElement`를 구현한다. `MDCContext()` 생성 시점의 MDC 상태를 캡처하여, `withContext`로 스레드가 전환될 때 새 스레드에 복사하고, 블록이 끝나면 원래대로 복원한다.
 
-주의: `MDCContext`를 써도 코루틴 내부에서 `MDC.put()`으로 바꾼 값은 다음 suspension point에서 사라진다. `MDCContext`가 복원하는 값은 생성 시점에 캡처한 스냅샷이기 때문이다. 코루틴 안에서 MDC를 바꿔야 한다면 `withContext(MDCContext())`로 다시 감싸 새 스냅샷을 만들면 된다.
+주의: `MDCContext`를 사용하더라도, 코루틴 내부에서 `MDC.put()`으로 변경한 값은 다음 suspension point에서 유실될 수 있다. `MDCContext`가 복원하는 것은 생성 시점에 캡처한 스냅샷이기 때문이다. 코루틴 안에서 MDC를 변경해야 한다면 `withContext(MDCContext())`를 다시 감싸서 새 스냅샷을 만들어야 한다.
 
 ```
 ┌─ MDCContext 동작 흐름 ──────────────────────────────┐
@@ -505,4 +505,4 @@ suspend fun getProduct(@PathVariable id: Long): Product {
 | MDCContext | ThreadContextElement로 MDC를 코루틴 컨텍스트에 포함시켜 전환 시 복사 |
 | runBlocking | 현재 스레드를 blocking. 서버 환경에서 사용 금지 |
 
-코루틴과 Spring을 같이 쓸 때 가장 자주 부딪히는 지점은 **ThreadLocal 유실**이다. Spring의 트랜잭션, 보안 컨텍스트, MDC는 모두 ThreadLocal 기반인데 `withContext`는 스레드를 전환한다. 이 둘이 만나면 기능이 조용히 사라지고 에러도 로그도 남지 않는다. "지금 어떤 스레드에서 실행되는가"를 항상 의식하는 것 — 코루틴 + Spring 환경에서 가장 중요한 습관이다.
+코루틴과 Spring을 함께 쓸 때 가장 자주 빠지는 함정은 **ThreadLocal 유실**이다. Spring의 트랜잭션, 보안 컨텍스트, MDC 등은 모두 ThreadLocal 기반인데, `withContext`는 스레드를 전환한다. 이 둘이 만나면 조용히 기능이 사라지고, 에러도 로그도 남지 않는다. "어떤 스레드에서 실행되는가"를 항상 의식하는 것이 코루틴 + Spring 환경에서 가장 중요한 습관인 것 같다.
