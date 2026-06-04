@@ -1,5 +1,5 @@
 ---
-title: "Redis 분산락과 청크 처리 — 실무 패턴 정리"
+title: "OOM이 발생하는 두 가지 시나리오 — 동시성 제어 실패와 대량 데이터 처리"
 date: 2026-05-19 10:00:00 +0900
 categories: [JVM, Spring]
 tags: [oom, concurrency, redis, distributed-lock, redisson, lettuce, chunking, batch]

@@ -1,5 +1,5 @@
 ---
-title: "코루틴 톺아보기 (3) — 예외 처리와 실전 함정: withContext가 삼켜버린 Spring Event"
+title: "코루틴 톺아보기 (3) — 예외 처리와 withContext의 Spring Event 손실 패턴"
 date: 2026-05-27 10:00:00 +0900
 categories: [Kotlin, Coroutine]
 tags: [kotlin, coroutine, exception-handling, coroutineexceptionhandler, withcontext, threadlocal, spring-transaction, mdc, runblocking, cancellationexception]

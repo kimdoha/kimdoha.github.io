@@ -1,5 +1,5 @@
 ---
-title: "Spring WebFlux 500 에러의 정체 — ArrayList가 thread-safe하지 않아서 생긴 일"
+title: "Spring WebFlux의 ArrayList 동시 접근으로 발생한 500 에러 — thread-safety 분석"
 date: 2026-04-29 09:00:00 +0900
 categories: [Spring, Concurrency]
 tags: [spring-webflux, reactor, thread-safety, arraylist, kotlin-coroutines]

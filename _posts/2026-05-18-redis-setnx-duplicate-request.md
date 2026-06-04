@@ -1,5 +1,5 @@
 ---
-title: "Redis SET NX로 중복 요청 차단하기 — 안전한 락이 아니라 Best-Effort 방어선으로 보기"
+title: "Redis SET NX로 중복 요청 차단하기 — 락이 아닌 Best-Effort 방어선의 한계와 활용"
 date: 2026-05-18 10:00:00 +0900
 categories: [Redis, Backend]
 tags: [redis, distributed-lock, setnx, concurrency, duplicate-request, backend]

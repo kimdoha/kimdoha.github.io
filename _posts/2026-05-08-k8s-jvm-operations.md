@@ -1,5 +1,5 @@
 ---
-title: "K8S에서 JVM 앱 운영하기 (2) — Graceful Shutdown과 운영"
+title: "K8S에서 JVM 앱 운영하기 (2) — Graceful Shutdown과 HPA Warmup"
 date: 2026-05-08 10:10:00 +0900
 categories: [JVM, Kubernetes]
 tags: [kubernetes, jvm, graceful-shutdown, monitoring, hpa, jvm-warmup, micrometer, prometheus]

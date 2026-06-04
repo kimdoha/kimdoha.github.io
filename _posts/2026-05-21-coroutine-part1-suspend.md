@@ -1,5 +1,5 @@
 ---
-title: "코루틴 톺아보기 (1) — suspend 함수는 어떻게 스레드를 반납하는가"
+title: "코루틴 톺아보기 (1) — suspend 함수의 스레드 반납 동작 원리"
 date: 2026-05-21 10:00:00 +0900
 categories: [Kotlin, Coroutine]
 tags: [kotlin, coroutine, suspend, cps, continuation, dispatcher, withcontext, limitedparallelism]

@@ -1,5 +1,5 @@
 ---
-title: "K8S에서 JVM 앱 운영하기 (3) — CPU는 느려지고, Memory는 죽는다"
+title: "K8S에서 JVM 앱 운영하기 (3) — CPU Throttling과 메모리 한계 동작"
 date: 2026-05-08 10:20:00 +0900
 categories: [JVM, Kubernetes]
 tags: [kubernetes, jvm, oom, pod-resources, memory, cpu-throttling, qos]
