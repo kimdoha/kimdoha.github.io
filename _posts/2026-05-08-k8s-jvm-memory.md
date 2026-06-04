@@ -7,8 +7,8 @@ series: "K8S에서 JVM 앱 운영하기"
 ---
 
 > 이 글은 **K8S에서 JVM 앱 운영하기** 시리즈의 세 번째 글이다.
-> 1. [클러스터 구조와 Probe](/posts/2026-05-08-k8s-jvm-lifecycle)
-> 2. [Graceful Shutdown과 운영](/posts/2026-05-08-k8s-jvm-operations)
+> 1. [클러스터 구조와 Probe](/posts/k8s-jvm-lifecycle/)
+> 2. [Graceful Shutdown과 HPA Warmup](/posts/k8s-jvm-operations/)
 > 3. **CPU는 느려지고, Memory는 죽는다** ← 현재 글
 
 > **TL;DR**: K8S에서 JVM 앱을 운영할 때 CPU limit 초과와 Memory limit 초과는 커널의 처리 방식이 다르다. CPU limit 초과는 CFS throttling으로 제한되고, memory limit 초과는 커널 OOM Killer가 SIGKILL을 전송해 프로세스를 강제 종료할 수 있다. JVM OOM과 Pod OOM은 감지 주체, 증상, 대응 방법이 모두 다르다.

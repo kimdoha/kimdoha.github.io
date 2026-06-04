@@ -413,7 +413,7 @@ TTL 만료 **전에** 확률적으로 미리 갱신한다. 만료 시점에 가�
 
 분산 환경에서 여러 서버가 동일한 자원에 동시 접근할 때, **하나의 서버만 작업을 수행**하도록 보장하는 메커니즘이 분산 락이다.
 
-기본 구현(`SET NX PX` + Lua 해제), Watchdog 패턴, Lettuce vs Redisson 비교 등 실무 패턴은 [Redis 분산락과 청크 처리 — 실무 패턴 정리](/posts/oom-lessons-from-failures/)에서 다뤘다. 여기서는 단일 Redis 락의 한계를 넘어서는 **Redlock 알고리즘과 그 안전성 논쟁**을 살펴본다.
+기본 구현(`SET NX PX` + Lua 해제), Watchdog 패턴, Lettuce vs Redisson 비교 등 실무 패턴은 [OOM이 발생하는 두 가지 시나리오 — 동시성 제어 실패와 대량 데이터 처리](/posts/oom-lessons-from-failures/)에서 다뤘다. 여기서는 단일 Redis 락의 한계를 넘어서는 **Redlock 알고리즘과 그 안전성 논쟁**을 살펴본다.
 
 ---
 

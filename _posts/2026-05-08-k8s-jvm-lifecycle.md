@@ -8,8 +8,8 @@ series: "K8S에서 JVM 앱 운영하기"
 
 > 이 글은 **K8S에서 JVM 앱 운영하기** 시리즈의 첫 번째 글이다.
 > 1. **클러스터 구조와 Probe** ← 현재 글
-> 2. [Graceful Shutdown과 운영](/posts/2026-05-08-k8s-jvm-operations)
-> 3. [CPU는 느려지고, Memory는 죽는다](/posts/2026-05-08-k8s-jvm-memory)
+> 2. [Graceful Shutdown과 HPA Warmup](/posts/k8s-jvm-operations/)
+> 3. [CPU Throttling과 메모리 한계 동작](/posts/k8s-jvm-memory/)
 
 CPU/Memory 동작 차이와 OOM 문제를 이해하려면, K8S가 JVM 앱을 배포·실행·종료하는 전체 라이프사이클을 먼저 파악해야 한다. 이 글에서는 K8S 클러스터 구조, JVM 앱의 배포 흐름, 그리고 JVM 앱에서 특히 중요한 세 가지 Probe를 다룬다.
 

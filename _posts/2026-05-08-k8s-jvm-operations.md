@@ -7,9 +7,9 @@ series: "K8S에서 JVM 앱 운영하기"
 ---
 
 > 이 글은 **K8S에서 JVM 앱 운영하기** 시리즈의 두 번째 글이다.
-> 1. [클러스터 구조와 Probe](/posts/2026-05-08-k8s-jvm-lifecycle)
+> 1. [클러스터 구조와 Probe](/posts/k8s-jvm-lifecycle/)
 > 2. **Graceful Shutdown과 운영** ← 현재 글
-> 3. [CPU는 느려지고, Memory는 죽는다](/posts/2026-05-08-k8s-jvm-memory)
+> 3. [CPU Throttling과 메모리 한계 동작](/posts/k8s-jvm-memory/)
 
 1편에서 JVM 앱의 배포~Probe 통과까지의 라이프사이클을 다뤘다. 이 글에서는 Pod 종료 시 발생하는 **Race Condition과 Graceful Shutdown**, JVM 모니터링 메트릭, 그리고 HPA 스케일아웃 시 JVM Warmup 문제를 다룬다.
 
