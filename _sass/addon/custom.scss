@@ -10,6 +10,9 @@
   --bs-body-font-size: 0.78rem;
   --bs-body-line-height: 1.7;
 
+  /* Override Chirpy core page background to match the cream light theme */
+  --main-bg: #faf9f5;
+
   /* Code block theme — LIGHT (GitHub Light). Switches with mode. */
   --highlight-bg-color: #f6f8fa;
   --code-color: #24292f;
@@ -82,6 +85,7 @@
 
 /* ===== Dark mode variables ===== */
 @mixin dark-vars {
+  --main-bg: #1a1815;
   --highlight-bg-color: #282c34;
   --code-color: #abb2bf;
   --code-header-text-color: #636d83;
@@ -176,12 +180,23 @@ body {
   background-color: #faf9f5 !important;
 }
 
-html[data-mode="dark"] body {
+/* Page background must follow the theme on every root container,
+   not just <body> — otherwise a dark wrapper lingers in light mode. */
+html,
+#main-wrapper {
+  background-color: #faf9f5 !important;
+}
+
+html[data-mode="dark"],
+html[data-mode="dark"] body,
+html[data-mode="dark"] #main-wrapper {
   background-color: #1a1815 !important;
 }
 
 @media (prefers-color-scheme: dark) {
-  html:not([data-mode]) body {
+  html:not([data-mode]),
+  html:not([data-mode]) body,
+  html:not([data-mode]) #main-wrapper {
     background-color: #1a1815 !important;
   }
 }
