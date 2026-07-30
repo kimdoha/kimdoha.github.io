@@ -10,17 +10,36 @@
   --bs-body-font-size: 0.78rem;
   --bs-body-line-height: 1.7;
 
-  /* Code block colors — always dark */
-  --highlight-bg-color: #282c34;
-  --code-color: #abb2bf;
-  --code-header-text-color: #636d83;
-  --code-header-muted-color: #2c313a;
-  --highlighter-rouge-color: #c678dd;
+  /* Code block theme — LIGHT (GitHub Light). Switches with mode. */
+  --highlight-bg-color: #f6f8fa;
+  --code-color: #24292f;
+  --code-header-text-color: #57606a;
+  --code-header-muted-color: #d0d7de;
+  --highlighter-rouge-color: #0550ae;
 
-  /* Code block frame — tuned for light (cream) background.
-     Code stays dark by design; only the frame adapts to the theme. */
-  --code-frame-border: rgba(20, 20, 19, 0.08);
-  --code-frame-shadow: 0 2px 12px rgba(20, 20, 19, 0.1), 0 1px 3px rgba(20, 20, 19, 0.06);
+  --code-bg: #f6f8fa;
+  --code-text: #24292f;
+  --code-header-bg: #eaeef2;
+  --code-header-border: #d0d7de;
+  --code-header-text: #57606a;
+  --code-header-hover: #24292f;
+  --code-linenum: #8c959f;
+
+  --tok-keyword: #cf222e;
+  --tok-string:  #0a3069;
+  --tok-comment: #6e7781;
+  --tok-func:    #8250df;
+  --tok-class:   #953800;
+  --tok-number:  #0550ae;
+  --tok-op:      #24292f;
+  --tok-attr:    #0550ae;
+  --tok-tag:     #116329;
+  --tok-var:     #953800;
+  --tok-err:     #cf222e;
+
+  /* Code block frame — subtle on light (cream) background */
+  --code-frame-border: rgba(20, 20, 19, 0.1);
+  --code-frame-shadow: 0 2px 12px rgba(20, 20, 19, 0.08), 0 1px 3px rgba(20, 20, 19, 0.05);
 
   /* Custom theme colors — light (Anthropic Base) */
   --ct-text: #141413;
@@ -63,11 +82,31 @@
 
 /* ===== Dark mode variables ===== */
 @mixin dark-vars {
-  --highlight-bg-color: #1c1e26;
-  --code-color: #c9d1d9;
-  --code-header-text-color: #6e7681;
-  --code-header-muted-color: #30363d;
+  --highlight-bg-color: #282c34;
+  --code-color: #abb2bf;
+  --code-header-text-color: #636d83;
+  --code-header-muted-color: #2c313a;
   --highlighter-rouge-color: #79c0ff;
+
+  --code-bg: #282c34;
+  --code-text: #abb2bf;
+  --code-header-bg: #21252b;
+  --code-header-border: #2c313a;
+  --code-header-text: #636d83;
+  --code-header-hover: #abb2bf;
+  --code-linenum: #4b5263;
+
+  --tok-keyword: #c678dd;
+  --tok-string:  #98c379;
+  --tok-comment: #5c6370;
+  --tok-func:    #61afef;
+  --tok-class:   #e5c07b;
+  --tok-number:  #d19a66;
+  --tok-op:      #abb2bf;
+  --tok-attr:    #d19a66;
+  --tok-tag:     #e06c75;
+  --tok-var:     #e06c75;
+  --tok-err:     #e06c75;
 
   /* Code block frame — deeper shadow on dark background */
   --code-frame-border: rgba(255, 255, 255, 0.06);
@@ -290,25 +329,25 @@ div.highlighter-rouge {
   font-size: 11px !important;
   font-weight: 500;
   padding: 0.35rem 1rem !important;
-  background-color: #21252b !important;
-  border-bottom: 1px solid #2c313a !important;
-  color: #636d83 !important;
+  background-color: var(--code-header-bg) !important;
+  border-bottom: 1px solid var(--code-header-border) !important;
+  color: var(--code-header-text) !important;
   letter-spacing: 0.04em;
   font-family: 'JetBrains Mono', monospace !important;
 
   button {
-    color: #636d83 !important;
+    color: var(--code-header-text) !important;
     transition: color 0.15s ease;
 
     &:hover {
-      color: #abb2bf !important;
+      color: var(--code-header-hover) !important;
     }
   }
 }
 
 .highlight,
 div[class^="language-"] .highlight {
-  background-color: #282c34 !important;
+  background-color: var(--code-bg) !important;
 
   pre,
   > code {
@@ -327,7 +366,7 @@ div[class^="language-"] .highlight {
     font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Menlo, Monaco, Consolas, monospace !important;
     font-weight: 400;
     overflow-x: auto;
-    color: #abb2bf !important;
+    color: var(--code-text) !important;
     -webkit-font-smoothing: auto;
     -moz-osx-font-smoothing: auto;
     tab-size: 4;
@@ -338,21 +377,21 @@ div[class^="language-"] .highlight {
     padding: 0 !important;
   }
 
-  /* One Dark syntax highlighting */
-  .k, .kd, .kn, .kp, .kr, .kt, .kv { color: #c678dd !important; }
-  .s, .sa, .s1, .s2, .sb, .sc, .sd, .sh, .sx, .dl, .se, .ss { color: #98c379 !important; }
-  .c, .c1, .cm, .cs, .cp { color: #5c6370 !important; font-style: italic; }
-  .nf, .nb { color: #61afef !important; }
-  .nc, .nn { color: #e5c07b !important; }
-  .mi, .mf, .mh, .il { color: #d19a66 !important; }
-  .o, .p { color: #abb2bf !important; }
-  .na { color: #d19a66 !important; }
-  .nt { color: #e06c75 !important; }
-  .nl { color: #61afef !important; }
-  .ni, .ne { color: #e06c75 !important; }
-  .nv, .vi, .vc, .vg { color: #e06c75 !important; }
-  .w { color: #abb2bf !important; }
-  .err { color: #e06c75 !important; background-color: transparent !important; }
+  /* Syntax highlighting (mode-aware: One Dark ↔ GitHub Light) */
+  .k, .kd, .kn, .kp, .kr, .kt, .kv { color: var(--tok-keyword) !important; }
+  .s, .sa, .s1, .s2, .sb, .sc, .sd, .sh, .sx, .dl, .se, .ss { color: var(--tok-string) !important; }
+  .c, .c1, .cm, .cs, .cp { color: var(--tok-comment) !important; font-style: italic; }
+  .nf, .nb { color: var(--tok-func) !important; }
+  .nc, .nn { color: var(--tok-class) !important; }
+  .mi, .mf, .mh, .il { color: var(--tok-number) !important; }
+  .o, .p { color: var(--tok-op) !important; }
+  .na { color: var(--tok-attr) !important; }
+  .nt { color: var(--tok-tag) !important; }
+  .nl { color: var(--tok-func) !important; }
+  .ni, .ne { color: var(--tok-var) !important; }
+  .nv, .vi, .vc, .vg { color: var(--tok-var) !important; }
+  .w { color: var(--code-text) !important; }
+  .err { color: var(--tok-err) !important; background-color: transparent !important; }
 
   /* Line numbers table */
   table {
@@ -370,7 +409,7 @@ div[class^="language-"] .highlight {
 
       &.gl {
         padding-right: 0.8rem !important;
-        color: #4b5263 !important;
+        color: var(--code-linenum) !important;
         user-select: none;
         opacity: 0.6;
       }
@@ -388,8 +427,8 @@ div[class^="language-"] .highlight {
 
 /* Raw <pre> blocks (HTML diagrams, etc.) */
 .post-content > pre {
-  background-color: #282c34 !important;
-  color: #abb2bf !important;
+  background-color: var(--code-bg) !important;
+  color: var(--code-text) !important;
   padding: 0.9rem 2rem !important;
   border-radius: 10px;
   font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Menlo, Monaco, Consolas, monospace;
@@ -415,42 +454,10 @@ div[class^="language-"] .highlight {
   word-break: break-word;
 }
 
-/* Light mode — force dark code blocks */
-html:not([data-mode]),
-html[data-mode="light"] {
-  .highlight,
-  div[class^="language-"] .highlight {
-    background-color: #282c34 !important;
-    color: #abb2bf !important;
-
-    pre,
-    > code {
-      background-color: transparent !important;
-      color: #abb2bf !important;
-    }
-
-    .k, .kd, .kn, .kp, .kr, .kt, .kv { color: #c678dd !important; }
-    .s, .sa, .s1, .s2, .sb, .sc, .sd, .sh, .sx, .dl, .se, .ss { color: #98c379 !important; }
-    .c, .c1, .cm, .cs, .cp { color: #5c6370 !important; font-style: italic; }
-    .nf, .nb { color: #61afef !important; }
-    .nc, .nn { color: #e5c07b !important; }
-    .mi, .mf, .mh, .il { color: #d19a66 !important; }
-    .o, .p { color: #abb2bf !important; }
-    .na { color: #d19a66 !important; }
-    .nt { color: #e06c75 !important; }
-    .nl { color: #61afef !important; }
-    .ni, .ne { color: #e06c75 !important; }
-    .nv, .vi, .vc, .vg { color: #e06c75 !important; }
-    .w { color: #abb2bf !important; }
-    .err { color: #e06c75 !important; background-color: transparent !important; }
-  }
-
-  .code-header {
-    background-color: #21252b !important;
-    border-bottom-color: #2c313a !important;
-    color: #636d83 !important;
-  }
-}
+/* (Code blocks follow the theme via the variables above:
+   GitHub Light in light mode, One Dark in dark mode.
+   The previous "force dark in light mode" block was removed so that
+   toggling to light truly turns the whole page light.) */
 
 /* ===== Post metadata ===== */
 .post-meta {
