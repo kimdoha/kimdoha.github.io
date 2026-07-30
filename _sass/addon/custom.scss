@@ -166,6 +166,48 @@ html[data-mode="dark"] {
   }
 }
 
+/* ===== Chirpy core light palette =====
+   Chirpy core keys its theme off `data-bs-theme` and DEFAULTS TO DARK when that
+   attribute is absent (`:root:not([data-bs-theme])`). But the theme toggle only
+   sets `data-mode`. Result: in light mode our --ct/--code vars switch, yet core
+   vars (page bg, tables, sidebar, topbar…) stay dark, leaving the reading area
+   dark. Re-bind the core LIGHT palette to the data-mode signal with !important
+   (needed to beat `:root:not([data-bs-theme])`'s higher specificity). */
+@mixin light-core-vars {
+  --main-bg: #faf9f5 !important;
+  --main-border-color: #e3ddd3 !important;
+  --text-color: #141413 !important;
+  --text-muted-color: #5e5d59 !important;
+  --text-muted-highlight-color: #3d3d3a !important;
+  --heading-color: #141413 !important;
+  --blockquote-border-color: #e3ddd3 !important;
+  --blockquote-text-color: #5e5d59 !important;
+  --link-color: #c15f3c !important;
+  --sidebar-bg: #f5f3ed !important;
+  --sidebar-border-color: #e3ddd3 !important;
+  --sidebar-muted-color: #87867f !important;
+  --topbar-bg: rgb(250 249 245 / 80%) !important;
+  --topbar-text-color: #141413 !important;
+  --card-bg: #ffffff !important;
+  --card-header-bg: #f0eee6 !important;
+  --mask-bg: #c1c3c5 !important;
+  --tb-odd-bg: #f7f5ef !important;
+  --tb-even-bg: #faf9f5 !important;
+  --tb-border-color: #e3ddd3 !important;
+  --btn-paginator-hover-color: #f0eee6 !important;
+  --toc-highlight: #c15f3c !important;
+}
+
+html[data-mode="light"] {
+  @include light-core-vars;
+}
+
+@media (prefers-color-scheme: light) {
+  html:not([data-mode]) {
+    @include light-core-vars;
+  }
+}
+
 /* ===== Base ===== */
 html {
   font-size: 12px;
