@@ -17,6 +17,11 @@
   --code-header-muted-color: #2c313a;
   --highlighter-rouge-color: #c678dd;
 
+  /* Code block frame — tuned for light (cream) background.
+     Code stays dark by design; only the frame adapts to the theme. */
+  --code-frame-border: rgba(20, 20, 19, 0.08);
+  --code-frame-shadow: 0 2px 12px rgba(20, 20, 19, 0.1), 0 1px 3px rgba(20, 20, 19, 0.06);
+
   /* Custom theme colors — light (Anthropic Base) */
   --ct-text: #141413;
   --ct-heading: #141413;
@@ -63,6 +68,10 @@
   --code-header-text-color: #6e7681;
   --code-header-muted-color: #30363d;
   --highlighter-rouge-color: #79c0ff;
+
+  /* Code block frame — deeper shadow on dark background */
+  --code-frame-border: rgba(255, 255, 255, 0.06);
+  --code-frame-shadow: 0 4px 16px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.2);
 
   --ct-text: #d1cfc5;
   --ct-heading: #e8e6dc;
@@ -273,8 +282,8 @@ div.highlighter-rouge {
   margin: 1.4rem 0 !important;
   border-radius: 10px !important;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.04) !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--code-frame-border) !important;
+  box-shadow: var(--code-frame-shadow);
 }
 
 .code-header {
@@ -387,8 +396,8 @@ div[class^="language-"] .highlight {
   font-size: 12px;
   line-height: 1.7;
   overflow-x: auto;
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--code-frame-border);
+  box-shadow: var(--code-frame-shadow);
   margin: 1.4rem 0;
 }
 
