@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anthropic Style Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background-color: #faf9f5;
+    color: #141413;
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    letter-spacing: -0.01em;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* --- Sidebar --- */
+  .sidebar {
+    position: fixed; left: 0; top: 0; bottom: 0;
+    width: 220px;
+    background: #f0eee6;
+    border-right: 1px solid #d1cfc5;
+    padding: 2rem 1.5rem;
+    display: flex; flex-direction: column;
+  }
+  .sidebar .site-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #141413;
+    margin-bottom: 0.3rem;
+  }
+  .sidebar .site-subtitle {
+    font-size: 0.72rem;
+    color: #87867f;
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 2.5rem;
+  }
+  .sidebar nav a {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #5e5d59;
+    text-decoration: none;
+    padding: 0.4rem 0;
+    transition: color 0.15s;
+  }
+  .sidebar nav a:hover, .sidebar nav a.active {
+    color: #d97757;
+  }
+
+  /* --- Main --- */
+  .main {
+    margin-left: 220px;
+    max-width: 740px;
+    padding: 3rem 2.5rem 4rem;
+  }
+
+  /* --- Post Header --- */
+  .post-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: #87867f;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.8rem;
+  }
+  .post-meta .category {
+    color: #d97757;
+    font-weight: 500;
+  }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    color: #141413;
+    margin-bottom: 1rem;
+  }
+  h1 .underline {
+    text-decoration: underline;
+    text-decoration-thickness: 3px;
+    text-underline-offset: 4px;
+    text-decoration-color: #d97757;
+  }
+  .post-desc {
+    font-size: 0.95rem;
+    color: #5e5d59;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #d1cfc5;
+  }
+
+  /* --- Content --- */
+  h2 {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #141413;
+    margin-top: 2.8rem;
+    margin-bottom: 0.8rem;
+    letter-spacing: -0.02em;
+  }
+  h3 {
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #141413;
+    margin-top: 2rem;
+    margin-bottom: 0.6rem;
+  }
+  p { margin-bottom: 1.1rem; }
+  strong { font-weight: 600; color: #141413; }
+
+  blockquote {
+    border-left: 3px solid #d97757;
+    background: #f0eee6;
+    padding: 0.8rem 1.2rem;
+    border-radius: 0 6px 6px 0;
+    margin: 1.4rem 0;
+    font-size: 0.9rem;
+    color: #3d3d3a;
+  }
+
+  ul, ol {
+    padding-left: 1.3rem;
+    margin-bottom: 1rem;
+  }
+  li { margin-bottom: 0.3rem; }
+  li::marker { color: #d97757; }
+
+  /* --- Code --- */
+  code.inline {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82em;
+    background: #e8e6dc;
+    color: #3d3d3a;
+    padding: 0.15em 0.45em;
+    border-radius: 3px;
+  }
+  pre {
+    background: #141413;
+    color: #e8e6dc;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    padding: 1.2rem 2rem;
+    border-radius: 8px;
+    margin: 1.4rem 0;
+    overflow-x: auto;
+    border: none;
+    box-shadow: none;
+  }
+  pre .comment { color: #87867f; font-style: italic; }
+  pre .keyword { color: #d97757; }
+  pre .string { color: #788c5d; }
+  pre .number { color: #6a9bcc; }
+
+  /* --- Table --- */
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #d1cfc5;
+    margin: 1.4rem 0;
+    font-size: 0.82rem;
+  }
+  thead th {
+    background: #f0eee6;
+    font-weight: 600;
+    text-align: left;
+    padding: 0.55rem 0.8rem;
+    border-bottom: 2px solid #d1cfc5;
+    color: #141413;
+  }
+  td {
+    padding: 0.5rem 0.8rem;
+    border-bottom: 1px solid #e8e6dc;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: #f0eee6; }
+
+  /* --- Tag --- */
+  .tags { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid #d1cfc5; }
+  .tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #87867f;
+    border: 1px solid #d1cfc5;
+    padding: 0.2em 0.6em;
+    border-radius: 0;
+    margin: 0.15rem;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+  .tag:hover {
+    color: #d97757;
+    border-color: #d97757;
+  }
+
+  .style-badge {
+    position: fixed; top: 1rem; right: 1rem;
+    background: #141413; color: #faf9f5;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; padding: 0.4rem 0.8rem;
+    border-radius: 0 0 8px 8px;
+    letter-spacing: 0.03em;
+  }
+</style>
+</head>
+<body>
+
+<div class="style-badge">STYLE: ANTHROPIC — Research Journal</div>
+
+<div class="sidebar">
+  <div class="site-title">Doha's Dev Log</div>
+  <div class="site-subtitle">Backend Engineer</div>
+  <nav>
+    <a href="#" class="active">Home</a>
+    <a href="#">Categories</a>
+    <a href="#">Tags</a>
+    <a href="#">Archives</a>
+    <a href="#">About</a>
+  </nav>
+</div>
+
+<div class="main">
+  <div class="post-meta">
+    <span class="category">Kubernetes</span> · 2026-05-08 · 8 min read
+  </div>
+
+  <h1>K8S는 JVM 앱을 어떻게 <span class="underline">살리고 죽이는가</span></h1>
+
+  <p class="post-desc">Probe부터 OOM Kill까지 — K8S가 JVM 앱을 배포하고, 생사를 판단하고, 트래픽을 제어하고, 종료 시 정리할 시간을 주는 전체 과정을 다룬다.</p>
+
+  <h2>1. 클러스터 구조</h2>
+
+  <p>Kubernetes 클러스터는 <strong>Control Plane</strong>과 <strong>Worker Node</strong>로 구성된다. Control Plane이 전역적 결정을 내리고, 각 Worker Node의 <code class="inline">kubelet</code>이 Pod의 컨테이너를 관리한다.</p>
+
+<pre>
+┌────────────────────────── Kubernetes Cluster ──────────────────────────┐
+│                                                                        │
+│  ┌─── Control Plane ───┐     ┌──────── Worker Node ────────────────┐  │
+│  │                      │     │                                     │  │
+│  │  API Server          │     │  <span class="keyword">kubelet</span>: Pod 관리, Probe 실행      │  │
+│  │  Scheduler           │     │  <span class="keyword">kube-proxy</span>: Service → Pod 라우팅   │  │
+│  │  Controller Manager  │     │  Container Runtime: 컨테이너 실행   │  │
+│  │  etcd                │     │                                     │  │
+│  └──────────────────────┘     │  ┌─Pod─┐  ┌─Pod─┐  ┌─Pod─┐        │  │
+│                                │  │ JVM │  │ JVM │  │ JVM │        │  │
+│                                │  └─────┘  └─────┘  └─────┘        │  │
+└────────────────────────────────────────────────────────────────────────┘
+</pre>
+
+  <h2>2. Health Check — 세 가지 Probe</h2>
+
+  <p>JVM 앱은 시작이 느리기 때문에 Probe 설정이 중요하다. 각 Probe가 <strong>없으면 어떤 문제가 생기는지</strong> 시나리오로 이해하면 역할이 명확해진다.</p>
+
+  <table>
+    <thead>
+      <tr><th>Probe</th><th>실패 시 동작</th><th>핵심 역할</th><th>외부 의존성?</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Startup</strong></td><td>Liveness/Readiness 비활성화 유지</td><td>JVM 느린 시작 수용</td><td>불필요</td></tr>
+      <tr><td><strong>Liveness</strong></td><td>컨테이너 재시작</td><td>좀비 Pod 감지</td><td>넣지 않는다</td></tr>
+      <tr><td><strong>Readiness</strong></td><td>Endpoint에서 제거</td><td>일시적 장애 시 트래픽 우회</td><td>넣는다 (DB, 캐시)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Spring Boot Actuator 연동</h3>
+
+<pre>
+<span class="comment"># Spring Boot Actuator 연동 예시</span>
+<span class="keyword">startupProbe</span>:
+  httpGet:
+    path: <span class="string">/actuator/health/liveness</span>
+    port: <span class="number">8080</span>
+  initialDelaySeconds: <span class="number">10</span>
+  periodSeconds: <span class="number">5</span>
+  failureThreshold: <span class="number">36</span>
+</pre>
+
+  <blockquote>
+    <strong>근거</strong>: Kubernetes 공식 문서 — "Startup Probe가 성공할 때까지 Liveness, Readiness Probe는 비활성화된다."
+  </blockquote>
+
+  <div class="tags">
+    <a class="tag" href="#">kubernetes</a>
+    <a class="tag" href="#">jvm</a>
+    <a class="tag" href="#">spring-boot</a>
+    <a class="tag" href="#">probe</a>
+    <a class="tag" href="#">graceful-shutdown</a>
+    <a class="tag" href="#">oom</a>
+  </div>
+</div>
+
+</body>
+</html>
