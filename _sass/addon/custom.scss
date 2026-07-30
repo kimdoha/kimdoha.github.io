@@ -174,6 +174,10 @@ html[data-mode="dark"] {
    dark. Re-bind the core LIGHT palette to the data-mode signal with !important
    (needed to beat `:root:not([data-bs-theme])`'s higher specificity). */
 @mixin light-core-vars {
+  /* Chirpy sets `color-scheme: dark` on :root when data-bs-theme is absent,
+     which makes the browser canvas/scrollbars render dark behind transparent
+     elements (e.g. <main>). Force light so the whole viewport is light. */
+  color-scheme: light !important;
   --main-bg: #faf9f5 !important;
   --main-border-color: #e3ddd3 !important;
   --text-color: #141413 !important;
@@ -225,20 +229,26 @@ body {
 /* Page background must follow the theme on every root container,
    not just <body> — otherwise a dark wrapper lingers in light mode. */
 html,
-#main-wrapper {
+#main-wrapper,
+#core-wrapper,
+main {
   background-color: #faf9f5 !important;
 }
 
 html[data-mode="dark"],
 html[data-mode="dark"] body,
-html[data-mode="dark"] #main-wrapper {
+html[data-mode="dark"] #main-wrapper,
+html[data-mode="dark"] #core-wrapper,
+html[data-mode="dark"] main {
   background-color: #1a1815 !important;
 }
 
 @media (prefers-color-scheme: dark) {
   html:not([data-mode]),
   html:not([data-mode]) body,
-  html:not([data-mode]) #main-wrapper {
+  html:not([data-mode]) #main-wrapper,
+  html:not([data-mode]) #core-wrapper,
+  html:not([data-mode]) main {
     background-color: #1a1815 !important;
   }
 }
