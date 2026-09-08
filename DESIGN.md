@@ -211,3 +211,28 @@ table:       6px    # 유지
 - 코드 블럭: One Dark 테마 전체 (구문 강조, 배경, 라인 넘버)
 - 모바일 반응형 breakpoint 및 구조
 - `#sidebar #avatar { display: none }`
+
+---
+
+## Reading Experience (2026-09-08 추가)
+
+긴 기술 글의 읽기 경험을 보강한 규칙. 새 토큰 없이 기존 토큰만 조합했다.
+
+### 본문 링크
+
+`.post-content a` 에 스타일이 없어 테마 기본값으로 렌더링되던 것을 팔레트에 맞췄다.
+
+- 색: `ct-accent` (clay) — 헤딩·본문이 모두 무채색이라 링크만 액센트를 가져도 과하지 않음
+- 평소: `ct-border` 옅은 밑줄 / hover: 밑줄을 `ct-accent` 로 + `ct-bg-blockquote` 배경
+- 레퍼런스가 많은 글에서 본문 리듬을 해치지 않도록 평소 상태는 약하게 유지
+- 제외: `.anchor`(헤딩 앵커), `.img-link`, 코드 블록 내부 링크
+
+### TOC 현재 위치
+
+`#toc-wrapper` 에 활성 상태 스타일이 없어 긴 글에서 현재 절을 알기 어려웠다.
+`ct-accent` + `font-weight: 600` 으로 표시. tocbot(`is-active-link`)·scrollspy(`active`) 두 클래스 모두 대응.
+
+### 가로 스크롤 발견성
+
+표·`<pre>`·`div.highlight` 는 이미 `overflow-x: auto` 지만 스크롤 가능함이 보이지 않았다.
+6px 얇은 스크롤바를 `ct-border` 로 상시 노출(hover 시 `ct-meta-light`). 레이아웃 영향 없음.

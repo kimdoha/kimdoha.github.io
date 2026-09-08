@@ -1005,3 +1005,69 @@ article .content {
     }
   }
 }
+
+/* =================================
+   Reading experience
+   ================================= */
+
+/* 본문 링크 — 팔레트의 clay accent 사용. 평소엔 옅은 밑줄, hover 에서만 강조해
+   레퍼런스가 많은 글에서도 본문 리듬을 해치지 않는다. */
+.post-content a:not(.anchor):not(.img-link):not(.no-styling) {
+  color: var(--ct-accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--ct-border);
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+
+  &:hover {
+    border-bottom-color: var(--ct-accent);
+    background-color: var(--ct-bg-blockquote);
+  }
+}
+
+/* 헤딩 앵커는 본문 링크 장식 제외 */
+.post-content .anchor,
+.post-content .anchor:hover {
+  border-bottom: none;
+  background-color: transparent;
+}
+
+/* 코드 안의 링크는 밑줄만 (배경은 코드블록 배경과 충돌) */
+.post-content pre a:hover,
+.post-content code a:hover {
+  background-color: transparent;
+}
+
+/* TOC — 현재 읽고 있는 절 표시. tocbot(is-active-link)과 scrollspy(active) 모두 대응 */
+#toc-wrapper {
+  li a.active,
+  a.is-active-link,
+  .toc-link.is-active-link {
+    color: var(--ct-accent) !important;
+    font-weight: 600;
+  }
+}
+
+/* 가로 스크롤 영역(표·코드·다이어그램)의 스크롤바를 얇게 노출해 스크롤 가능함을 알린다 */
+.post-content table,
+.post-content > pre,
+.post-content div.highlight {
+  scrollbar-width: thin;
+  scrollbar-color: var(--ct-border) transparent;
+
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--ct-border);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--ct-meta-light);
+  }
+}
