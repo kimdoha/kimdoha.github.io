@@ -17,6 +17,7 @@ toc: true
 - 코루틴 취소는 강제 종료가 아니라, 코루틴이 suspend 지점에서 스스로 확인해야 동작하는 신호입니다. 그래서 `withTimeout`은 **suspend 중인 코루틴만** 구제합니다. 스레드째 블로킹된 요청은 타임아웃이 응답만 끊을 뿐, 스레드는 로딩이 끝날 때까지 계속 일합니다.
 - 해법은 `Caffeine.buildAsync()` + `future { }` + `await()`입니다. 같은 키의 동시 미스는 하나의 `CompletableFuture`를 공유하고, 대기자는 스레드를 반납한 채 suspend 상태로 기다립니다.
 - 단, AsyncCache의 로더는 **Caffeine executor(기본 `ForkJoinPool.commonPool`)에서 실행**됩니다. 로더 안에서 블로킹하면 요청 풀보다 훨씬 작고 JVM 전역이 공유하는 풀이 고갈됩니다. 따라서 로더는 executor 스레드를 점유하지 않아야 합니다 — 시작 즉시 suspend하거나, 블로킹 작업은 전용 디스패처로 옮겨 실행해야 합니다.
+- 그리고 `await()`는 호출자가 취소되면 **기다리던 future에 `cancel()`을 겁니다.** 캐시가 공유하는 future를 그대로 기다리면 요청 하나의 취소가 대기자 전원을 실패시키므로, `copy()`로 대기자마다 분리된 핸들을 줘야 합니다.
 
 ## 1. 증상 — 하위 스팬 0개짜리 15초
 
@@ -186,6 +187,8 @@ Caffeine이 건네주는 executor 위에서 로더 코루틴을 시작시킵니�
 
 물론 트레이드오프도 있습니다. 로딩을 요청과 분리하면, 요청이 전부 취소되어도 **로딩은 중간에 취소할 방법 없이 끝까지 실행됩니다.** 로더가 짧은 DB 조회라면 이 비용은 문제가 되지 않습니다. 오히려 완료된 결과가 캐시에 남아 다음 요청이 히트하므로 이득입니다. 반대로 로더가 수십 초 걸리는 작업이라면, 아무도 기다리지 않는 작업이 자원을 계속 사용하는 셈이므로 이 설계를 그대로 쓰면 안 됩니다.
 
+다만 이 스코프 분리만으로는 취소 격리가 완성되지 않았습니다. 대기자 쪽에 구멍이 하나 남아 있었고, 이는 7장에서 다룹니다.
+
 ### 4.5 수정 후의 동작 흐름
 
 ```
@@ -243,7 +246,7 @@ fun `단일 스레드 디스패처에서 캐시 로딩 중에도 다른 코루�
 
 4번 테스트에서는 예외 처리 방식의 차이도 확인했습니다. 기존에는 Spring `CaffeineCache`가 로더 예외를 `ValueRetrievalException`으로 래핑해 던졌지만, `AsyncCache`를 직접 쓰면 `await()`가 원본 예외를 그대로 던집니다. 그래서 `ValueRetrievalException` 타입에 의존하는 호출부가 있는지 확인한 뒤 진행했습니다.
 
-## 6. 코드 리뷰에서 발견한 문제 — executor 스레드 위에서의 블로킹
+## 6. 코드 리뷰에서 발견한 문제 ① — executor 스레드 위에서의 블로킹
 
 전환을 마친 뒤, 코드 리뷰에서 중요한 문제를 발견했습니다.
 
@@ -287,12 +290,63 @@ commonPool이 어떤 풀인지 생각하면 심각성이 보입니다. 기본 �
 정리하면 — **AsyncCache의 executor는 로더 코루틴을 시작시키는 용도이지, 작업을 수행하는 자리가 아닙니다.** 로더는 시작 즉시 suspend하거나 블로킹 작업을 전용 디스패처로 넘겨서, executor 스레드의 점유 시간을 코루틴을 시작시키는 데 드는 마이크로초 수준으로 유지해야 합니다.
 
 
-## 7. 배운 것 — 같은 문제를 찾아내는 체크리스트
+## 7. 코드 리뷰에서 발견한 문제 ② — `await()`가 공유 future를 취소한다
+
+4.4에서 "요청이 취소돼도 로딩은 완료된다"고 했지만, 스코프 분리만으로는 부족했습니다.
+
+```kotlin
+}.await() as VALUE      // ← 캐시가 들고 있는 원본 future를 그대로 기다린다
+```
+
+`CompletionStage.await()`는 호출자 코루틴이 취소되면 **기다리던 future에 `cancel()`을 겁니다.** 바이트코드에 그대로 드러납니다.
+
+```
+FutureKt$await$2$1.invoke(Throwable)
+  5: invokevirtual  // Method java/util/concurrent/CompletableFuture.cancel:(Z)Z
+```
+
+문제는 그 대상이 Caffeine이 캐시에 보관 중인 **공유 future**라는 점입니다. 요청 하나가 취소되면 공유 future가 취소되고, 같은 키를 기다리던 대기자 전원이 `CancellationException`으로 실패합니다. 로더 코루틴도 함께 취소됩니다.
+
+4.4의 스코프 분리가 막은 것은 **로더가 호출자의 자식이 되어 함께 취소되는 경로** 하나뿐이었습니다. 취소는 다른 문으로 들어왔습니다. **기다리는 쪽이 `await()`로 공유 future를 직접 취소하는 경로**는 그대로 열려 있었던 겁니다.
+
+해결은 `copy()` 한 줄입니다.
+
+```kotlin
+}.copy().await() as VALUE
+```
+
+`copy()`는 **원본과 별개인 새 `CompletableFuture` 인스턴스**를 만들고, 원본에 완료 콜백을 하나 등록합니다. 원본이 완료되면 그 값이나 예외가 복사본으로 전달됩니다.
+
+참조는 이 방향뿐입니다. 복사본은 원본을 알지만 **원본은 복사본을 모릅니다.** 그래서 복사본에 `cancel()`을 호출하면 복사본 인스턴스만 `CancellationException`으로 완료될 뿐, 원본의 `cancel()`은 호출되지 않습니다.
+
+```java
+var src = new CompletableFuture<String>();
+var cp1 = src.copy();
+var cp2 = src.copy();
+
+cp1.cancel(false);
+// cp1.cancelled=true | src.cancelled=false  src.done=false | cp2.done=false
+
+src.complete("LOADED");
+// cp2.get() = "LOADED"
+```
+
+취소된 건 `cp1`뿐이고 원본은 멀쩡합니다. 로딩은 끝까지 진행되어 나머지 대기자에게 정상 값이 전달됩니다.
+
+```
+변경 전:  A.await() ──cancel──▶ F_shared ──▶ B·C 동반 실패 + 로더 취소
+변경 후:  A.await() ──cancel──▶ F_A     ─✗─▶ F_shared 무사, B·C 정상 완료
+```
+
+여기서 얻은 교훈은 **`await()`가 읽기 전용 연산이 아니라는 것**입니다. 정상 경로에서는 값을 가져오지만, 취소 경로에서는 대상 future를 취소합니다. 하나의 future를 여러 호출자가 공유한다면, 각 호출자가 `await()`하는 대상을 원본이 아닌 복사본으로 바꿔야 한 명의 취소가 원본과 나머지 대기자에게 닿지 않습니다.
+
+## 8. 배운 것 — 같은 문제를 찾아내는 체크리스트
 
 1. **트레이스에서 "하위 스팬 0개 + 타임아웃값과 거의 일치하는 지속시간"은 강력한 단서입니다.** 쿼리가 아니라 스레드풀과 큐를 의심하세요.
 2. **타임아웃은 블로킹된 스레드를 회수하지 못합니다.** 코루틴 취소는 suspend 지점에서 확인되는 신호이므로, `withTimeout`이 취소할 수 있는 것은 suspend 중인 코루틴뿐입니다. "타임아웃이 있으니 최악은 막는다"는 가정은 블로킹 코드에는 적용되지 않습니다.
 3. **suspend와 동기 콜백의 경계에서 `runBlocking`은 마지막 수단입니다.** 콜백이 future를 받을 수 있다면 해결책은 `future { }`입니다. — `runBlocking`은 "결과가 나올 때까지 정지", `future`는 "약속만 받고 즉시 진행".
 4. **executor 위에서는 블로킹하지 않습니다.** Caffeine executor든 commonPool이든, 그 풀의 크기와 공유 범위를 모른 채 블로킹하면 병목이 그 풀로 옮겨갈 뿐입니다. 블로킹 IO는 그 용도로 사이징된 전용 디스패처에서 처리해야 합니다.
+5. **공유 future를 여럿이 `await()`하면 취소가 전파됩니다.** 스코프를 분리하면 로더가 호출자의 자식이 되는 것은 막히지만, **`await()`가 취소될 때 기다리던 future에 `cancel()`을 호출하는 동작은 그대로입니다.** 그 future가 공유 자원이면 대기자 한 명의 취소가 원본을 취소해 나머지 전원을 실패시킵니다. 각 대기자는 원본이 아니라 `copy()`로 만든 복사본을 `await()`해야 합니다.
 
 ## References
 
@@ -300,7 +354,8 @@ commonPool이 어떤 풀인지 생각하면 심각성이 보입니다. 기본 �
 - [Caffeine Wiki — Home](https://github.com/ben-manes/caffeine/wiki) — `Caffeine.executor` 설정, 기본값 `ForkJoinPool.commonPool`
 - [Caffeine API — AsyncCache](https://www.javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/latest/com.github.benmanes.caffeine/com/github/benmanes/caffeine/cache/AsyncCache.html) — `get(key, BiFunction<K, Executor, CompletableFuture<V>>)` 계약
 - [kotlinx.coroutines — future builder](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.future/future.html) — suspend → CompletableFuture 브리지
-- [kotlinx.coroutines — CompletionStage.await()](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.future/await.html) — 원본 예외 전파 동작
+- [kotlinx.coroutines — CompletionStage.await()](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.future/await.html) — 원본 예외 전파, 취소 시 대상 future `cancel()` 호출
+- [JDK Javadoc — CompletableFuture.copy()](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/CompletableFuture.html#copy()) — 의존 스테이지를 통한 방어적 복사(Java 9+)
 - [kotlinx.coroutines — runBlocking](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/run-blocking.html) — "This function should not be used from a coroutine" 경고
 - [Kotlin Docs — Cancellation and timeouts](https://kotlinlang.org/docs/cancellation-and-timeouts.html) — 취소의 협조성(cooperative cancellation), suspend 지점에서만 전달
 - [Kotlin Docs — Coroutine context and dispatchers](https://kotlinlang.org/docs/coroutine-context-and-dispatchers.html) — `withContext`, `asCoroutineDispatcher`
